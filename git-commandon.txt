@@ -1,7 +1,12 @@
 $ git checkout -b myFork
 
+//första gången du pushar till branchen
 $ git push -u origin myFork
+
+//resten av gångerna man vill pusha
+$ git push
 
 //sen när man vill byta tillbaka
 
 $ git checkout master
+
