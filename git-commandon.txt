@@ -1,0 +1,7 @@
+$ git checkout -b myFork
+
+$ git push -u origin myFork
+
+//sen när man vill byta tillbaka
+
+$ git checkout master
