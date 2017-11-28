@@ -7,6 +7,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
+#include "camera.h"
 
 int main(int argc, char *argv[])
 {
@@ -40,11 +41,13 @@ int main(int argc, char *argv[])
   // accepted can be read from comm_fd, whatever is written to comm_fd is
   //sent to the other device.
   int comm_fd = accept(listen_fd, (struct sockaddr*) NULL, NULL);
-  // struct camera* cam = camera_open();
-  // struct frame* fram = camera_get_frame(cam);
-  // byte* byt = get_frame_bytes(fram);
-  //
-  // size_t get_frame_size(struct frame*);
-  write(comm_fd, str, strlen(str)+1);
+  struct camera* cam = camera_open();
+  struct frame* fram = camera_get_frame(cam);
+  byte* byt = get_frame_bytes(fram);
+  size_t frameSize = get_frame_size(fram);
+
+  while (1) {
+    write(comm_fd, byt, frameSize);
+  }
 
 }
