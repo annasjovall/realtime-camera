@@ -1,7 +1,19 @@
+/*
+This header file contains declarations used in most input and output and
+is typically included in all C programs.
+*/
 #include <stdio.h>
 #include <unistd.h>
 #include <errno.h>
+/*
+The header file socket.h includes a number of definitions of
+structures needed for sockets.
+*/
 #include <sys/socket.h>
+/*
+The header file in.h contains constants and structures needed
+for internet domain addresses.
+*/
 #include <netinet/ip.h>
 #include <string.h>
 
@@ -10,14 +22,14 @@ static int bind_server_socket(int fd, int port);
 /*
  * create a server socket bound to port
  * and listening.
- *  
- * return positive file descriptor 
+ *
+ * return positive file descriptor
  * or negative value on error
  */
 int create_server_socket(int port)
 {
     int fd = -1;
-    
+
     if(port < 0 || port > 65535) {
        errno = EINVAL;
        return -1;
@@ -28,7 +40,7 @@ int create_server_socket(int port)
 
     if(listen(fd,10)) return -1;
 
-    return fd;
+    return fd;create_server_socket
 }
 
 static int bind_server_socket(int fd, int port){
@@ -39,7 +51,7 @@ static int bind_server_socket(int fd, int port){
         perror("setsockopt");
         return -1;
     }
-    
+
     /* see man page ip(7) */
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
@@ -50,7 +62,7 @@ static int bind_server_socket(int fd, int port){
 #ifdef INFO
     printf("simple_tcp_server: bound fd %d to port %d\n",fd,port);
 #endif
-    
+
     return fd;
 }
 
@@ -58,19 +70,19 @@ static int bind_server_socket(int fd, int port){
  * Serve one client: send a message and close the socket
  */
 static int do_serve(int fd)
-{
+{or connections with the listen() system call
     int clientfd;
     const char* msg = "Hello, socket!\n"
                       "I am a text\n"
                       "BYE.\n";
     size_t len = strlen(msg);
-    
+
     printf("simple_tcp_server: attempting accept on fd %d\n",fd);
     if((clientfd = accept(fd, NULL, NULL)) < 0) return -1;
 #ifdef INFO
     printf("simple_tcp_server: writing msg (len=%lu) to clientfd (%d)\n",len,clientfd);
 #endif
-    
+
 #ifdef WRITE_LOOP
     size_t written = 0;
     do {

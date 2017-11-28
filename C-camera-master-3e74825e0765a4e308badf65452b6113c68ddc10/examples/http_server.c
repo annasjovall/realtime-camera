@@ -28,7 +28,7 @@
 #define MOTION_PORT 9090
 #endif
 
-#define BUFSIZE 50000
+#define BUFSIZE 50000000
 struct client{
     int  connfd;
     byte sendBuff[BUFSIZE];
@@ -113,9 +113,8 @@ ssize_t setup_packet(struct client* client, uint32_t frame_sz)
       return -1;
     }
     client->frame_data = client->sendBuff + header_size;
-#ifdef DEBUG
+
     printf("Header size = " FORMAT_FOR_SIZE_T "\n", header_size);
-#endif
     return header_size+frame_sz;
 }
 
@@ -246,39 +245,15 @@ void* serve_client(void *ctxt)
         perror("motion_task: read");
 	return (void*) (intptr_t) errno;
     }
-#ifdef DEBUG
     printf("read: rres = %d\n", rres);
     printf("buf[%s]\n", buf);
-#endif
-    int hres = parse_http_request(buf, 1024);
-    if(hres == 0) {
-#ifdef USE_CAMERA
-	    int cres=0;
-            if( !client->cam || (cres=try_get_frame(client))) {
-                printf("ERROR getting frame from camera: %d\n",cres);
-		send_internal_error(client, "Error getting frame from camera\n");
-            } 
-#else
-        snprintf(client->sendBuff, sizeof(client->sendBuff), "Hello...\n");
-	client_write_string(client);
-#endif
-
-    } else {
-	if (hres == 404) {
-	    const char* msg = "404: File not found.\n\nI only have image.jpg";
-	    snprintf(client->sendBuff, sizeof(client->sendBuff),
-		     "HTTP/1.0 404 Not Found\nContent-Length: " FORMAT_FOR_SIZE_T
-		     "\nContent-Type: text/plain\n\n%s",
-		     strlen(msg), msg);
-	} else {
-	    const char* msg = "501: Not implemented";
-	    snprintf(client->sendBuff, sizeof(client->sendBuff),
-		     "HTTP/1.0 501 Not Implemented\nContent-Length: " FORMAT_FOR_SIZE_T
-		     "\nContent-Type: text/plain\n\n%s",
-		     strlen(msg), msg);
-	}
-	client_write_string(client);
-    }
+    int cres=0;
+          if( !client->cam || (cres=try_get_frame(client))) {
+              printf("ERROR getting frame from camera: %d\n",cres);
+  send_internal_error(client, "Error getting frame from camera\n");
+          }
+      snprintf(client->sendBuff, sizeof(client->sendBuff), "Hello...\n");
+      client_write_string(client);
     return (void*) (intptr_t) close(client->connfd);
 }
 
