@@ -65,7 +65,7 @@ int main(int argc, char *argv[])
 
     printf("Heihgt: %p\n", frame_size_int);
     write(comm_fd, &frame_size_int, 10);
-  //  write(comm_fd, camera_byte, frame_size);
+    write(comm_fd, camera_byte, frame_size);
   }
 
 }
