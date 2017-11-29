@@ -9,9 +9,25 @@
 #include <netinet/in.h>
 #include "camera.h"
 
+struct global_state {
+    camera* cam;
+};
+
+
+// int try_open_camera(struct global_state* state)
+// {
+//     state->cam = camera_open();
+//     if (!state->cam){ // Check if null
+//         printf("axism3006v: Stream is null, can't connect to camera");
+//         return ERR_OPEN_STREAM;
+//     }
+//     return 0;
+// }
+
 int main(int argc, char *argv[])
 {
   char str[] = "Hello World";
+  struct global_state state;
   //Struct to hold IP Address and Port Numbers
   struct sockaddr_in servaddr;
   //Vill skicka över AF_INET, typen SOCK_STREAM sen 0,
@@ -41,10 +57,20 @@ int main(int argc, char *argv[])
   // accepted can be read from comm_fd, whatever is written to comm_fd is
   //sent to the other device.
   int comm_fd = accept(listen_fd, (struct sockaddr*) NULL, NULL);
-    // camera* cam = camera_open();
-    // frame* fram = camera_get_frame(cam);
-    // char* byt = get_frame_bytes(fram);
-    // size_t frameSize = get_frame_size(fram);
+  state.cam = camera_open();
+
+  if(!state.cam){
+    printf("stream is null ,cannot connect to camera");
+  }
+  //
+  // frame* fram = camera_get_frame(cam);
+  //
+  // if(fram){
+  //   printf("we got a frame!");
+  // }
+  //
+  // char* byt = get_frame_bytes(fram);
+  // size_t frameSize = get_frame_size(fram);
 
   while (1) {
     write(comm_fd, str, 11);
