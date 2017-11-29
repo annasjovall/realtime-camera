@@ -18,9 +18,10 @@ int main(int argc, char *argv[])
   servaddr.sin_addr.s_addr = htons(INADDR_ANY);
   servaddr.sin_port = htons(22000);
   bind(listen_fd, (struct sockaddr *) &servaddr, sizeof(servaddr));
+  listen(listen_fd, 10);
+  int comm_fd = accept(listen_fd, (struct sockaddr*) NULL, NULL);
+
   while (1) {
-    listen(listen_fd, 10);
-    int comm_fd = accept(listen_fd, (struct sockaddr*) NULL, NULL);
     camera* cam = camera_open();
     frame* camera_frame = camera_get_frame(cam);
     byte* camera_byte = get_frame_bytes(camera_frame);
