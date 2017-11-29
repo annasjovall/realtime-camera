@@ -44,14 +44,14 @@ int main(int argc, char *argv[])
   // Start Listening for connections , keep at the most 10 connection
   // requests waiting.If there are more than 10 computers wanting to connect
   // at a time, the 11th one fails to.
+  listen(listen_fd, 10);
+  //Accept a connection from any device who is willing to connect, If there
+  //is no one who wants to connect , wait. A file descriptor is returned.
+  //This can finally be used to communicate , whatever is sent by the device
+  // accepted can be read from comm_fd, whatever is written to comm_fd is
+  //sent to the other device.
+  int comm_fd = accept(listen_fd, (struct sockaddr*) NULL, NULL);
   while (1) {
-    listen(listen_fd, 10);
-    //Accept a connection from any device who is willing to connect, If there
-    //is no one who wants to connect , wait. A file descriptor is returned.
-    //This can finally be used to communicate , whatever is sent by the device
-    // accepted can be read from comm_fd, whatever is written to comm_fd is
-    //sent to the other device.
-    int comm_fd = accept(listen_fd, (struct sockaddr*) NULL, NULL);
     camera* cam = camera_open();
     frame* camera_frame = camera_get_frame(cam);
     byte* camera_byte = get_frame_bytes(camera_frame);
