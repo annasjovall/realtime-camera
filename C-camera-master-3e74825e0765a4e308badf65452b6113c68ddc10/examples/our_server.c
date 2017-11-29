@@ -9,10 +9,6 @@
 #include <netinet/in.h>
 #include "camera.h"
 
-struct global_state {
-    camera* cam;
-};
-
 
 // int try_open_camera(struct global_state* state)
 // {
@@ -27,7 +23,6 @@ struct global_state {
 int main(int argc, char *argv[])
 {
   char str[] = "Hello World";
-  struct global_state state;
   //Struct to hold IP Address and Port Numbers
   struct sockaddr_in servaddr;
   //Vill skicka över AF_INET, typen SOCK_STREAM sen 0,
@@ -50,6 +45,8 @@ int main(int argc, char *argv[])
   // Start Listening for connections , keep at the most 10 connection
   // requests waiting.If there are more than 10 computers wanting to connect
   // at a time, the 11th one fails to.
+  while (1) {
+  
   listen(listen_fd, 10);
   //Accept a connection from any device who is willing to connect, If there
   //is no one who wants to connect , wait. A file descriptor is returned.
@@ -57,23 +54,22 @@ int main(int argc, char *argv[])
   // accepted can be read from comm_fd, whatever is written to comm_fd is
   //sent to the other device.
   int comm_fd = accept(listen_fd, (struct sockaddr*) NULL, NULL);
-  state.cam = camera_open();
+  camera* cam = camera_open();
+  frame* camera_frame = camera_get_frame(cam);
+  byte* camera_byte = get_frame_bytes(camera_frame);
+  size_t frame_size = get_frame_size(camera_frame);
+  size_t frame_height = get_frame_height(camera_frame);
+  size_t frame_width = get_frame_width(camera_frame);
 
-  if(!state.cam){
+  printf("Size: %zu\n", frame_size);
+  printf("Width: %zu\n", frame_width);
+  printf("Heihgt: %zu\n", frame_height);
+
+  if(!cam){
     printf("stream is null ,cannot connect to camera");
   }
-  //
-  // frame* fram = camera_get_frame(cam);
-  //
-  // if(fram){
-  //   printf("we got a frame!");
-  // }
-  //
-  // char* byt = get_frame_bytes(fram);
-  // size_t frameSize = get_frame_size(fram);
 
-  while (1) {
-    write(comm_fd, str, strlen(str) * sizeof(char));
+    write(comm_fd, camera_byte, frame_size);
   }
 
 }
