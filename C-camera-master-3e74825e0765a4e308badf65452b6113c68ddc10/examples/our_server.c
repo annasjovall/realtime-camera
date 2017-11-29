@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
   // size_t frameSize = get_frame_size(fram);
 
   while (1) {
-    write(comm_fd, str, 11);
+    write(comm_fd, str, strlen(str) * sizeof(char));
   }
 
 }
