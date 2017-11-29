@@ -11,7 +11,7 @@
 
 int main(int argc, char *argv[])
 {
-  char str[] = "Hello World!";
+  char str[] = "Hello World";
   //Struct to hold IP Address and Port Numbers
   struct sockaddr_in servaddr;
   //Vill skicka över AF_INET, typen SOCK_STREAM sen 0,
@@ -41,13 +41,13 @@ int main(int argc, char *argv[])
   // accepted can be read from comm_fd, whatever is written to comm_fd is
   //sent to the other device.
   int comm_fd = accept(listen_fd, (struct sockaddr*) NULL, NULL);
-  struct camera* cam = camera_open();
-  struct frame* fram = camera_get_frame(cam);
-  byte* byt = get_frame_bytes(fram);
-  size_t frameSize = get_frame_size(fram);
+    // camera* cam = camera_open();
+    // frame* fram = camera_get_frame(cam);
+    // char* byt = get_frame_bytes(fram);
+    // size_t frameSize = get_frame_size(fram);
 
   while (1) {
-    write(comm_fd, byt, frameSize);
+    write(comm_fd, str, 11);
   }
 
 }

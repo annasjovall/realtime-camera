@@ -1,8 +1,8 @@
-#ifdef FAKE
+// #ifdef FAKE
 #include "fakecapture.h"
-#else
-#include "capture.h"
-#endif
+// #else
+// #include "capture.h"
+// #endif
 
 #define IMAGE_JPEG "image/jpeg"
 
@@ -51,5 +51,3 @@ size_t get_frame_height(struct frame*);
 size_t get_frame_width(struct frame*);
 
 void frame_free(struct frame*);
-
-
