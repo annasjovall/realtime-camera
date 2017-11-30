@@ -34,6 +34,7 @@ void init_global_state(struct global_state* state)
 
 void* camera_open_task(void *cam)
 {
+  printf("anna");
   cam = camera_open();
   return (void*) (intptr_t) 0;
 }
@@ -72,7 +73,6 @@ int main(int argc, char *argv[])
   //sent to the other device.
   camera* cam = NULL;
   pthread_t camera_open_thread;
-  while (1) {
   if(!pthread_create(&camera_open_thread, NULL, camera_open_task, cam)){
     while (1) {
       printf("4\n");
