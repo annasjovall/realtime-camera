@@ -24,10 +24,10 @@
 
 static pthread_mutex_t global_mutex = PTHREAD_MUTEX_INITIALIZER;
 
-struct camera_state = {
+struct camera_state {
   byte* camera_byte;
   size_t frame_size;
-}
+};
 
 
 void* camera_open_task(void *state)
@@ -37,8 +37,8 @@ void* camera_open_task(void *state)
   frame* camera_frame = camera_get_frame(cam);
   struct camera_state* s = state;
   pthread_mutex_lock(&global_mutex);
-  s->camera_byte = get_frame_bytes(camera_frame);
-  s->frame_size = get_frame_size(camera_frame);
+  s.camera_byte = get_frame_bytes(camera_frame);
+  s.frame_size = get_frame_size(camera_frame);
   pthread_mutex_unlock(&global_mutex);
   return (void*) (intptr_t) 0;
 }
@@ -63,13 +63,13 @@ int main(int argc, char *argv[])
   printf("4\n");
   pthread_t camera_open_thread;
   struct camera_state state;
-  if(!pthread_create(&camera_open_thread, NULL, camera_open_task, state)){
+  if(!pthread_create(&camera_open_thread, NULL, camera_open_task, &state)){
     while (1) {
       printf("4\n");
       int comm_fd = accept(listen_fd, (struct sockaddr*) &servaddr2, &socklen);
-      printf("Size: %zu\n", frame_size);
+/*      printf("Size: %zu\n", frame_size);
       printf("Width: %zu\n", frame_width);
-      printf("Heihgt: %zu\n", frame_height);
+      printf("Heihgt: %zu\n", frame_height);*/
 
       //write(comm_fd, &frame_size_int, 10);
       pthread_mutex_lock(&global_mutex);
@@ -79,5 +79,3 @@ int main(int argc, char *argv[])
     }
   }
   }
-
-}
