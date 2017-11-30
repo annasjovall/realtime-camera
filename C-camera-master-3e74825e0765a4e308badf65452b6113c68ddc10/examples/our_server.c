@@ -37,8 +37,8 @@ void* camera_open_task(void *state)
   frame* camera_frame = camera_get_frame(cam);
   struct camera_state* s = state;
   pthread_mutex_lock(&global_mutex);
-  s.camera_byte = get_frame_bytes(camera_frame);
-  s.frame_size = get_frame_size(camera_frame);
+  &s.camera_byte = get_frame_bytes(camera_frame);
+  &s.frame_size = get_frame_size(camera_frame);
   pthread_mutex_unlock(&global_mutex);
   return (void*) (intptr_t) 0;
 }
@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 
       //write(comm_fd, &frame_size_int, 10);
       pthread_mutex_lock(&global_mutex);
-      write(comm_fd, state->camera_byte, state->frame_size);
+      write(comm_fd, &state.camera_byte, &state.frame_size);
     //  frame_free(camera_frame);
       pthread_mutex_unlock(&global_mutex);
     }
