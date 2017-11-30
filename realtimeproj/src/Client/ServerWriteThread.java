@@ -1,15 +1,16 @@
+package Client;
+
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
+public class ServerWriteThread extends Thread {
 
-public class ClientWriteThread extends Thread {
-
-	private ClientSharedData monitor;
+	private ServerSharedData monitor;
 	private byte[] buffer;
 	
-	public ClientWriteThread(ClientSharedData mon) {
+	public ServerWriteThread(ServerSharedData mon) {
 		monitor = mon;
 		buffer = new byte[8192];
 	}
@@ -17,7 +18,7 @@ public class ClientWriteThread extends Thread {
 	// Receive packages of random size from active connections.
 	public void run() {
 		while (!monitor.isShutdown())
-		{
+		{			
 			try {
 				// Blocking wait for connection
 				monitor.waitUntilActive();
@@ -28,8 +29,8 @@ public class ClientWriteThread extends Thread {
 				// Send data packages of different sizes
 				while (true) {
 					int size = Pack.pack(buffer);
-					Utils.printBuffer("ClientWriteThread", size, buffer);
-
+					Utils.printBuffer("ServerWriteThread", size, buffer);
+					
 					// Send package
 					os.write(buffer, 0, size);
 					
@@ -42,17 +43,17 @@ public class ClientWriteThread extends Thread {
 			} catch (IOException e) {
 				// Something happened with the connection
 				//
-				// Occurs if there is an error trying to write data,
-				// for instance that the connection suddenly closed.
+				// Example: the connection is closed on the client side, but
+				// the server is still trying to read data.
 				monitor.setActive(false);
-				Utils.println("No connection on client side");
+				Utils.println("No connection on server side");
 			} catch (InterruptedException e) {
-				// Occurs when interrupted
+				// Interrupt means shutdown
 				monitor.shutdown();
 				break;
 			}
 		}
-		
-		Utils.println("Exiting ClientWriteThread");
+
+		Utils.println("Exiting ServerWriteThread");
 	}
 }

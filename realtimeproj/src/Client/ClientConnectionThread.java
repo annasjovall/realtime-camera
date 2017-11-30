@@ -1,3 +1,4 @@
+package Client;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -21,23 +22,21 @@ public class ClientConnectionThread extends Thread {
 	
 	// Connect and reconnect if connection is dropped.
 	public void run() {
+		
 		while (!monitor.isShutdown())
 		{
 			try {
 				// In case of a reconnect, wait some time to avoid busy wait
-				if (reconnect) Thread.sleep(1000);
-				
-				// Establish connection
+				if (reconnect) Thread.sleep(100);
 				Socket socket = new Socket(host, port);
 				
 				// Configure socket to immediately send data.
 				// This is good for streaming.
-				socket.setTcpNoDelay(true);
+				//socket.setTcpNoDelay(true);
 				
 				// Inform monitor there is a connection
 				monitor.setSocket(socket);
 				monitor.setActive(true);
-				
 				monitor.waitUntilNotActive();
 				
 			} catch (UnknownHostException e) {
@@ -54,17 +53,17 @@ public class ClientConnectionThread extends Thread {
 				monitor.shutdown();
 				break;
 			}
-			
-			// Next connection is a reconnect attempt
-			reconnect = true;
-
-			// Close the socket before attempting reconnect
 			try {
 				Socket socket = monitor.getSocket();
 				if (socket != null) socket.close();
 			} catch (IOException e) {
 				// Occurs if there is an error in closing the socket.
 			}
+			// Next connection is a reconnect attempt
+			reconnect = true;
+
+			// Close the socket before attempting reconnect
+			
 		}
 		
 		// No resources to dispose since this is the responsibility

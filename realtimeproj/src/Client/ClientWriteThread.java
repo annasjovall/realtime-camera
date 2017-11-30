@@ -1,14 +1,16 @@
+package Client;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
 
-public class ServerWriteThread extends Thread {
 
-	private ServerSharedData monitor;
+public class ClientWriteThread extends Thread {
+
+	private ClientSharedData monitor;
 	private byte[] buffer;
 	
-	public ServerWriteThread(ServerSharedData mon) {
+	public ClientWriteThread(ClientSharedData mon) {
 		monitor = mon;
 		buffer = new byte[8192];
 	}
@@ -16,7 +18,7 @@ public class ServerWriteThread extends Thread {
 	// Receive packages of random size from active connections.
 	public void run() {
 		while (!monitor.isShutdown())
-		{			
+		{
 			try {
 				// Blocking wait for connection
 				monitor.waitUntilActive();
@@ -27,11 +29,13 @@ public class ServerWriteThread extends Thread {
 				// Send data packages of different sizes
 				while (true) {
 					int size = Pack.pack(buffer);
-					Utils.printBuffer("ServerWriteThread", size, buffer);
-					
+					Utils.printBuffer("ClientWriteThread", size, buffer);
+					sleep(1000);
 					// Send package
-					os.write(buffer, 0, size);
-					
+					//os.write(buffer, 0, size);
+					byte[] test = new byte[1];
+					test[0] = 'a';
+					os.write(test);
 					// Flush data
 					os.flush();
 
@@ -41,17 +45,17 @@ public class ServerWriteThread extends Thread {
 			} catch (IOException e) {
 				// Something happened with the connection
 				//
-				// Example: the connection is closed on the client side, but
-				// the server is still trying to read data.
+				// Occurs if there is an error trying to write data,
+				// for instance that the connection suddenly closed.
 				monitor.setActive(false);
-				Utils.println("No connection on server side");
+				Utils.println("No connection on client side");
 			} catch (InterruptedException e) {
-				// Interrupt means shutdown
+				// Occurs when interrupted
 				monitor.shutdown();
 				break;
 			}
 		}
-
-		Utils.println("Exiting ServerWriteThread");
+		
+		Utils.println("Exiting ClientWriteThread");
 	}
 }

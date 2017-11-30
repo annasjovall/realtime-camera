@@ -1,3 +1,4 @@
+package Client;
 
 public class Pack {
 	public static final int HEAD_SIZE = 3;

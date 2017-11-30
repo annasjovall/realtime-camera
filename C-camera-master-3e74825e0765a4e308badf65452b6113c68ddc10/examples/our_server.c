@@ -43,7 +43,7 @@ void* camera_open_task(void *state)
   while(1){
     int comm_fd = accept(listen_fd, (struct sockaddr*) NULL, NULL);
     char byte1[1];
-    read(comm_fd, byte1, 1);
+    read(listen_fd, byte1, 1);
     printf("%c\n",byte1[0]);
     printf("%d\n", byte1[0] == 'a');
     //printf("annastar - %s", byte1);
