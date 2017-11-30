@@ -41,7 +41,6 @@ void* camera_open_task(void *cam)
 
 int main(int argc, char *argv[])
 {
-  //Struct to hold IP Address and Port Numbers
   struct sockaddr_in servaddr;
   struct sockaddr_in servaddr2;
   socklen_t socklen;
@@ -52,11 +51,7 @@ int main(int argc, char *argv[])
   //connect on this socket will be redirected to listen_fd.
   printf("1\n");
   int listen_fd = socket(AF_INET, SOCK_STREAM, 0);
-  //Clear servaddr ( Mandatory ).
   bzero( &servaddr, sizeof(servaddr));
-  // Set Addressing scheme to – AF_INET ( IP )
-  // Allow any IP to connect – htons(INADDR_ANY)
-  // Listen on port 22000 – htons(22000)
   servaddr.sin_family = AF_INET;
   servaddr.sin_addr.s_addr = htons(INADDR_ANY);
   servaddr.sin_port = htons(22000);
