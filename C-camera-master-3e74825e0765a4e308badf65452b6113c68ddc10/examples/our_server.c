@@ -82,7 +82,7 @@ void* write_task(void *state)
     byte* camera_byte = get_frame_bytes(camera_frame);
     size_t frame_size = get_frame_size(camera_frame);
     unsigned long long time_stamp = get_frame_timestamp(camera_frame);
-    unsigned char bytes[8];
+    byte bytes[12];
     bytes[0] = (time_stamp >> 56) & 0xFF;
     bytes[1] = (time_stamp >> 48) & 0xFF;
     bytes[2] = (time_stamp >> 40) & 0xFF;
@@ -91,15 +91,19 @@ void* write_task(void *state)
     bytes[5] = (time_stamp >> 16) & 0xFF;
     bytes[6] = (time_stamp >> 8) & 0xFF;
     bytes[7] = time_stamp & 0xFF;
+    bytes[8] = (frame_size >> 24) & 0xFF;
+    bytes[9] = (frame_size >> 16) & 0xFF;
+    bytes[10] = (frame_size >> 8) & 0xFF;
+    bytes[11] = frame_size & 0xFF;
+    byte* package[] = &bytes + camera_byte;
     //write(comm_fd, time_stamp, 100);
     char read_byte[1];
 
     if(camera_frame) {
-      write(comm_fd_write, camera_byte, frame_size);
+      //write(comm_fd_write, bytes, 12);
+      write(comm_fd_write, package, frame_size + 12);
       frame_free(camera_frame);
     }
-
-    read(comm_fd_write, read_byte, 1);
   }
   return (void*) (intptr_t) 0;
 }
