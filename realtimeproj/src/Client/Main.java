@@ -1,11 +1,5 @@
 package Client;
 
-import Client.ClientConnectionThread;
-import Client.ClientReceiver;
-import Client.ClientSharedData;
-import Client.ClientShutdownThread;
-
-
 public class Main {
 
 	private static class StartClient extends Thread {

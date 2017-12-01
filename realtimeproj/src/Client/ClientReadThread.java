@@ -1,17 +1,11 @@
 package Client;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.ByteBuffer;
-import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Date;
 
 // This thread has the double responsibility of connecting 
 // and reading data from the socket
