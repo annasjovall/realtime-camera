@@ -1,4 +1,5 @@
 package Client;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -17,16 +18,13 @@ import java.util.Date;
 public class ClientReadThread extends Thread {
 
 	private ClientSharedData monitor;
-	private byte[] buffer;
 	private int photoIndex = 0;
 	private File photo;
 	private FileOutputStream fos;
 
 	public ClientReadThread(ClientSharedData mon) {
 		monitor = mon;
-		buffer = new byte[70000];
 	}
-
 
 	// Receive packages of random size from active connections.
 	public void run() {
@@ -35,46 +33,28 @@ public class ClientReadThread extends Thread {
 				// Wait for active connection
 				monitor.waitUntilReadActive();
 				InputStream is = monitor.getSocketRead().getInputStream();
-
-				ByteArrayOutputStream bufferos = new ByteArrayOutputStream();				
-				OutputStream os = monitor.getSocketRead().getOutputStream();
 				sleep(100);
-				//monitor.setWriteActive(false);
-				// Receive data packages of different sizes
+				// monitor.setWriteActive(false);
 				while (true) {
-					int nRead;
-					while ((nRead = is.read(buffer, 0, buffer.length)) != -1) {
-						  bufferos.write(buffer, 0, nRead);
-					}
-					
-					buffer = bufferos.toByteArray();
-					
-					createJPEG(buffer);
-					/*byte[] test = new byte[1];
-					test[0] = 'c';
-					os.write(test);
-					// Flush data
-					os.flush();*/
+					byte[] headerBuffer = new byte[4];
+					ByteBuffer jpegSizeByteBuffer = ByteBuffer.wrap(headerBuffer);
+					int jpegSize = jpegSizeByteBuffer.getInt();
+					System.out.println(jpegSize);
+					byte[] imageBuffer = new byte[jpegSize];
+					getJPEGSize(is, imageBuffer);
+					//createJPEG(imageBuffer);
 				}
 			} catch (IOException e) {
-				// Something happened with the connection
-				//
-				// Example: the connection is closed on the server side, but
-				// the client is still trying to write data.
 				monitor.setWriteActive(false);
 				Utils.println("No connection on client side");
 			} catch (InterruptedException e) {
-				// Occurs when interrupted
 				monitor.shutdown();
 				break;
 			}
 		}
-
-		// No resources to dispose since this is the responsibility
-		// of the shutdown thread.
 		Utils.println("Exiting ClientReadThread");
 	}
-	
+
 	public void createJPEG(byte[] image) {
 		photo = new File(photoIndex + "photo.jpeg");
 		photoIndex++;
@@ -88,25 +68,32 @@ public class ClientReadThread extends Thread {
 		}
 	}
 
-	public byte[] fixImage(byte[] image) {
-		byte[] tempBuffer = image;
-		int endIndex = image.length - 1;
-		for (int i = 0; i < image.length; i++) {
-			if (((image[i] & 0xFF) == 0xff) && ((image[i + 1] & 0xFF) == 0xd8) && ((image[i + 2] & 0xFF) == 0xff)) {
-				tempBuffer = Arrays.copyOfRange(image, i, endIndex);
-			}
-		}
-		return tempBuffer;
+	/*
+	 * Retrieves the size of the JPEG file and removes header from input stream
+	 * OBS doesn't remove timestamp when added
+	 * 
+	 * @return int representing how many bytes that were read, -1 if it failed
+	 */
+	private int getJPEGSize(InputStream is, byte[] headerBuffer) throws IOException {
+		return is.read(headerBuffer, 0, 4);
 	}
 
-	private byte[] cutBuffer() {
-		byte[] tempBuffer = buffer;
-		for (int i = buffer.length - 1; i > 0; i--) {
-			if (buffer[i] != 0) {
-				tempBuffer = Arrays.copyOfRange(buffer, 0, i + 1);
-				break;
-			}
-		}
-		return tempBuffer;
+	/*
+	 * Reads bytes from inputstream and places them in buffer
+	 * 
+	 * @return int representing how many bytes that were read, -1 if it failed
+	 */
+	private int getJPEG(InputStream is, byte[] imageBuffer) throws IOException {
+		// The offset is set to 0 since the header is read before
+		// TODO: Double check that the file is a JPEG file
+		return is.read(imageBuffer, 0, imageBuffer.length);
 	}
+
+	/*
+	 * private byte[] fixImage(byte[] image) { byte[] tempBuffer = image; int
+	 * endIndex = image.length - 1; for (int i = 0; i < image.length; i++) { if
+	 * (((image[i] & 0xFF) == 0xff) && ((image[i + 1] & 0xFF) == 0xd8) &&
+	 * ((image[i + 2] & 0xFF) == 0xff)) { tempBuffer = Arrays.copyOfRange(image,
+	 * i, endIndex); } } return tempBuffer; }
+	 */
 }
