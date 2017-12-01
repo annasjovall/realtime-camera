@@ -82,7 +82,7 @@ void* write_task(void *state)
     bytes[1] = (frame_size >> 16) & 0xFF;
     bytes[2] = (frame_size >> 8) & 0xFF;
     bytes[3] = frame_size & 0xFF;
-   write(comm_fd_write, bytes, 12);
+   write(comm_fd_write, bytes, 4);
    write(comm_fd_write, camera_byte, frame_size);
    frame_free(camera_frame);
   }
