@@ -28,6 +28,10 @@ struct global_state {
   int camera_is_open;
 };
 
+struct header {
+  int size;
+};
+
 void init_global_state(struct global_state* state)
 {
     struct global_state* s = state;
@@ -43,14 +47,15 @@ void* read_task(void *state)
   servaddr.sin_family = AF_INET;
   servaddr.sin_addr.s_addr = INADDR_ANY;
   servaddr.sin_port = htons(22000);
+  printf("READ THREAD CONTINUES\n");
   bind(listen_fd, (struct sockaddr *) &servaddr, sizeof(servaddr));
   listen(listen_fd, 10);
   int comm_fd_read = accept(listen_fd, (struct sockaddr*) NULL, NULL);
-
+  printf("ACCEPTED\n");
   while (1) {
-    char read_byte[1];
-    read(comm_fd_read, read_byte, 1);
-    printf("READ\n");
+    usleep(500000);
+    char read_byte[10];
+    read(comm_fd_read, read_byte, 10);
   }
   return (void*) (intptr_t) 0;
 }
@@ -71,9 +76,8 @@ void* write_task(void *state)
   bind(listen_fd, (struct sockaddr *) &servaddr, sizeof(servaddr));
   listen(listen_fd, 10);
   int comm_fd_write = accept(listen_fd, (struct sockaddr*) NULL, NULL);
-
   while(1) {
-    sleep(0);
+    usleep(1000000);
     frame* camera_frame = camera_get_frame(cam);
     byte* camera_byte = get_frame_bytes(camera_frame);
     size_t frame_size = get_frame_size(camera_frame);
@@ -88,7 +92,14 @@ void* write_task(void *state)
     bytes[6] = (time_stamp >> 8) & 0xFF;
     bytes[7] = time_stamp & 0xFF;
     //write(comm_fd, time_stamp, 100);
-    write(comm_fd_write, camera_byte, frame_size);
+    char read_byte[1];
+
+    if(camera_frame) {
+      write(comm_fd_write, camera_byte, frame_size);
+      frame_free(camera_frame);
+    }
+
+    //read(comm_fd_write, read_byte, 1);
   }
   return (void*) (intptr_t) 0;
 }
@@ -115,8 +126,8 @@ int main(int argc, char *argv[])
   pthread_create(&thread_ids[0], NULL, read_task, &state);
   pthread_create(&thread_ids[1], NULL, write_task, &state);
 
-  for (int i = 0; i < 2; i++) {
-    pthread_join(thread_ids[i], NULL);
-  }
+  pthread_join(thread_ids[0], NULL);
+  pthread_join(thread_ids[1], NULL);
+
   return 0;
 }
