@@ -77,7 +77,7 @@ void* write_task(void *state)
   listen(listen_fd, 10);
   int comm_fd_write = accept(listen_fd, (struct sockaddr*) NULL, NULL);
   while(1) {
-    usleep(1000000);
+    usleep(1000);
     frame* camera_frame = camera_get_frame(cam);
     byte* camera_byte = get_frame_bytes(camera_frame);
     size_t frame_size = get_frame_size(camera_frame);
@@ -99,7 +99,7 @@ void* write_task(void *state)
       frame_free(camera_frame);
     }
 
-    //read(comm_fd_write, read_byte, 1);
+    read(comm_fd_write, read_byte, 1);
   }
   return (void*) (intptr_t) 0;
 }
