@@ -47,7 +47,7 @@ void* camera_open_task(void *state)
     printf("%c\n",byte1[0]);
     printf("%d\n", byte1[0] == 'a');
     //printf("annastar - %s", byte1);
-    frame* camera_frame = camera_get_frame(cam);
+  /*  frame* camera_frame = camera_get_frame(cam);
     byte* camera_byte = get_frame_bytes(camera_frame);
     size_t frame_size = get_frame_size(camera_frame);
     unsigned long long time_stamp = get_frame_timestamp(camera_frame);
@@ -59,7 +59,7 @@ void* camera_open_task(void *state)
     bytes[4] = (time_stamp >> 24) & 0xFF;
     bytes[5] = (time_stamp >> 16) & 0xFF;
     bytes[6] = (time_stamp >> 8) & 0xFF;
-    bytes[7] = time_stamp & 0xFF;
+    bytes[7] = time_stamp & 0xFF;*/
     //write(comm_fd, time_stamp, 100);
     //write(comm_fd, camera_byte, frame_size);
   }
