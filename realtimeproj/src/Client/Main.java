@@ -10,7 +10,7 @@ public class Main {
 				Thread[] threads = new Thread[] {
 					new ClientReceiver(monitor),
 					new ClientWriteThread(monitor),
-					new ClientConnectionThread(monitor, "argus-2.student.lth.se", 22000),
+					new ClientConnectionThread(monitor, "argus-2.student.lth.se", 19999, 22000),
 					new ClientShutdownThread(monitor)
 				};
 				
