@@ -22,8 +22,10 @@ public class ClientShutdownThread extends Thread {
 		
 		// Close the socket before quitting
 		try {
-			Socket socket = monitor.getSocket();
-			if (socket != null) socket.close();
+			Socket socketRead = monitor.getSocketRead();
+			Socket socketWrite = monitor.getSocketWrite();
+			if (socketRead != null) socketRead.close();
+			if (socketWrite != null) socketWrite.close();
 		} catch (IOException e) {
 			// Occurs if there is an error in closing the socket.
 		}

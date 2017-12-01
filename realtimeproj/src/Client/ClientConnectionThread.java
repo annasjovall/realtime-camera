@@ -22,21 +22,27 @@ public class ClientConnectionThread extends Thread {
 	
 	// Connect and reconnect if connection is dropped.
 	public void run() {
-		
 		while (!monitor.isShutdown())
 		{
 			try {
 				// In case of a reconnect, wait some time to avoid busy wait
-				if (reconnect) Thread.sleep(100);
-				Socket socket = new Socket(host, port);
+				if (reconnect) Thread.sleep(1000);
+				
+				// Establish connection
+				Socket socketRead = new Socket("argus-4.student.lth.se", 19999);
+				Socket socketWrite = new Socket("argus-4.student.lth.se", 22000);
 				
 				// Configure socket to immediately send data.
 				// This is good for streaming.
-				//socket.setTcpNoDelay(true);
+				socketRead.setTcpNoDelay(true);
+				socketWrite.setTcpNoDelay(true);
 				
 				// Inform monitor there is a connection
-				monitor.setSocket(socket);
-				monitor.setActive(true);
+				monitor.setSocketRead(socketRead);
+				monitor.setSocketWrite(socketWrite);
+				monitor.setReadActive(true);
+				monitor.setWriteActive(true);
+				
 				monitor.waitUntilNotActive();
 				
 			} catch (UnknownHostException e) {
@@ -46,24 +52,27 @@ public class ClientConnectionThread extends Thread {
 				//
 				// Example: the connection is closed on the server side, but
 				// the client is still trying to write data.
-				monitor.setActive(false);
+				monitor.setWriteActive(false);
+				monitor.setReadActive(false);
 				Utils.println("No connection on client side");
 			} catch (InterruptedException e) {
 				// Occurs when interrupted
 				monitor.shutdown();
 				break;
 			}
-			try {
-				Socket socket = monitor.getSocket();
-				if (socket != null) socket.close();
-			} catch (IOException e) {
-				// Occurs if there is an error in closing the socket.
-			}
+			
 			// Next connection is a reconnect attempt
 			reconnect = true;
 
 			// Close the socket before attempting reconnect
-			
+			try {
+				Socket socketRead = monitor.getSocketRead();
+				Socket socketWrite = monitor.getSocketWrite();
+				if (socketRead != null) socketRead.close();
+				if (socketWrite != null) socketWrite.close();
+			} catch (IOException e) {
+				// Occurs if there is an error in closing the socket.
+			}
 		}
 		
 		// No resources to dispose since this is the responsibility

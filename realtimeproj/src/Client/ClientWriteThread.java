@@ -21,20 +21,14 @@ public class ClientWriteThread extends Thread {
 		{
 			try {
 				// Blocking wait for connection
-				monitor.waitUntilActive();
-
-				Socket socket = monitor.getSocket();
+				monitor.waitUntilWriteActive();
+				Socket socket = monitor.getSocketWrite();
 				OutputStream os = socket.getOutputStream();
-				
 				// Send data packages of different sizes
 				while (true) {
-					int size = Pack.pack(buffer);
-					Utils.printBuffer("ClientWriteThread", size, buffer);
-					sleep(1000);
-					// Send package
-					//os.write(buffer, 0, size);
+
 					byte[] test = new byte[1];
-					test[0] = 'a';
+					test[0] = 'c';
 					os.write(test);
 					// Flush data
 					os.flush();
@@ -47,7 +41,7 @@ public class ClientWriteThread extends Thread {
 				//
 				// Occurs if there is an error trying to write data,
 				// for instance that the connection suddenly closed.
-				monitor.setActive(false);
+				monitor.setWriteActive(false);
 				Utils.println("No connection on client side");
 			} catch (InterruptedException e) {
 				// Occurs when interrupted

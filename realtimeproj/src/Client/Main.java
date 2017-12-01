@@ -8,7 +8,7 @@ public class Main {
 				System.out.println("Starting network client");
 				ClientSharedData monitor = new ClientSharedData();
 				Thread[] threads = new Thread[] {
-					new ClientReadThread(monitor),
+					new ClientReceiver(monitor),
 					new ClientWriteThread(monitor),
 					new ClientConnectionThread(monitor, "argus-2.student.lth.se", 22000),
 					new ClientShutdownThread(monitor)
@@ -18,7 +18,7 @@ public class Main {
 				for (Thread thread : threads) thread.start();
 
 				// Interrupt threads after some time
-				Thread.sleep(1000000);
+				Thread.sleep(10000);
 				System.out.println("Interrupting client threads");
 				for (Thread thread : threads) thread.interrupt(); // Interrupt threads
 				for (Thread thread : threads) thread.join(); // Wait for threads to die
@@ -29,6 +29,8 @@ public class Main {
 			}
 		}
 	}
+
+	
 
 	public static void main(String[] args) {
 		try {

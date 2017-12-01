@@ -1,15 +1,14 @@
 package Client;
-
+import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Socket;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
@@ -25,39 +24,44 @@ public class ClientReadThread extends Thread {
 
 	public ClientReadThread(ClientSharedData mon) {
 		monitor = mon;
-		buffer = new byte[700000];
+		buffer = new byte[70000];
 	}
+
 
 	// Receive packages of random size from active connections.
 	public void run() {
 		while (!monitor.isShutdown()) {
 			try {
 				// Wait for active connection
-				monitor.waitUntilActive();
-				InputStream is = monitor.getSocket().getInputStream();
+				monitor.waitUntilReadActive();
+				InputStream is = monitor.getSocketRead().getInputStream();
+
+				ByteArrayOutputStream bufferos = new ByteArrayOutputStream();				
+				OutputStream os = monitor.getSocketRead().getOutputStream();
 				sleep(100);
-				monitor.setActive(false);
+				//monitor.setWriteActive(false);
 				// Receive data packages of different sizes
 				while (true) {
-					is.read(buffer);
-					byte[] image = cutBuffer();
-					if(image.length <10){
-					    System.out.println(ByteBuffer.wrap(image).getLong());
-					    long time = ByteBuffer.wrap(image).getLong();
-					    Timestamp stamp = new Timestamp(time);
-					    Date date = new Date(stamp.getTime());
-					    System.out.println(date);
-					}else{
-						//createJPEG(image);
+					int nRead;
+					while ((nRead = is.read(buffer, 0, buffer.length)) != -1) {
+						  bufferos.write(buffer, 0, nRead);
 					}
-					System.out.println(image.length);
+					
+					buffer = bufferos.toByteArray();
+					
+					createJPEG(buffer);
+					/*byte[] test = new byte[1];
+					test[0] = 'c';
+					os.write(test);
+					// Flush data
+					os.flush();*/
 				}
 			} catch (IOException e) {
 				// Something happened with the connection
 				//
 				// Example: the connection is closed on the server side, but
 				// the client is still trying to write data.
-				monitor.setActive(false);
+				monitor.setWriteActive(false);
 				Utils.println("No connection on client side");
 			} catch (InterruptedException e) {
 				// Occurs when interrupted
@@ -70,7 +74,7 @@ public class ClientReadThread extends Thread {
 		// of the shutdown thread.
 		Utils.println("Exiting ClientReadThread");
 	}
-
+	
 	public void createJPEG(byte[] image) {
 		photo = new File(photoIndex + "photo.jpeg");
 		photoIndex++;

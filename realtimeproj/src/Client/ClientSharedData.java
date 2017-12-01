@@ -1,35 +1,39 @@
 package Client;
-
 import java.net.Socket;
 
 public class ClientSharedData {
-	private volatile Socket socket;
-	private volatile boolean isActive;
+	private volatile Socket socketRead;
+	private volatile Socket socketWrite;
+	private volatile boolean readIsActive;
+	private volatile boolean writeIsActive;
 	private volatile boolean shutdown;
+
 	
-	public synchronized Socket getSocket() {
-		return socket;
-	}
-	
-	public synchronized void setSocket(Socket s) {
-		socket = s;
-	}
-	
-	public synchronized void setActive(boolean active) {
-		isActive = active;
+	public synchronized void setReadActive(boolean active) {
+		readIsActive = active;
 		notifyAll();
 	}
 	
-	public synchronized void waitUntilActive() throws InterruptedException {
-		while (!isActive) wait();
+	public synchronized void setWriteActive(boolean active) {
+		writeIsActive = active;
+		notifyAll();
+	}
+	
+	public synchronized void waitUntilReadActive() throws InterruptedException {
+		while (!readIsActive) wait();
+	}
+
+	public synchronized void waitUntilWriteActive() throws InterruptedException {
+		while (!writeIsActive) wait();
 	}
 	
 	public synchronized void waitUntilNotActive() throws InterruptedException {
-		while (isActive) wait();
+		while (writeIsActive && readIsActive) wait();
 	}
 	
 	public synchronized void shutdown() {
-		isActive = false;
+		writeIsActive = false;
+		readIsActive = false;
 		shutdown = true;
 		notifyAll();
 	}
@@ -40,5 +44,21 @@ public class ClientSharedData {
 	
 	public synchronized void waitUntilShutdown() throws InterruptedException {
 		while (!shutdown) wait();
+	}
+
+	public synchronized Socket getSocketWrite() {
+		return socketWrite;
+	}
+
+	public synchronized void setSocketWrite(Socket socketWrite) {
+		this.socketWrite = socketWrite;
+	}
+
+	public synchronized Socket getSocketRead() {
+		return socketRead;
+	}
+
+	public synchronized void setSocketRead(Socket socketRead) {
+		this.socketRead = socketRead;
 	}
 }
