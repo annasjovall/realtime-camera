@@ -5,15 +5,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-// This thread has the double responsibility of connecting 
+// This thread has the double responsibility of connecting
 // and reading data from the socket
 public class ClientReadThread extends Thread {
 
@@ -33,7 +30,7 @@ public class ClientReadThread extends Thread {
 		while (!monitor.isShutdown()) {
 			try {
 				// Wait for active connection
-				monitor.waitUntilActive();
+				monitor.waitUntilReadActive();
 				InputStream is = monitor.getSocket().getInputStream();
 				sleep(100);
 				monitor.setActive(false);
@@ -41,6 +38,7 @@ public class ClientReadThread extends Thread {
 				while (true) {
 					is.read(buffer);
 					byte[] image = cutBuffer();
+					System.out.println(image.length);
 					if(image.length <10){
 					    System.out.println(ByteBuffer.wrap(image).getLong());
 					    long time = ByteBuffer.wrap(image).getLong();
@@ -48,7 +46,7 @@ public class ClientReadThread extends Thread {
 					    Date date = new Date(stamp.getTime());
 					    System.out.println(date);
 					}else{
-						//createJPEG(image);
+						createJPEG(image);
 					}
 					System.out.println(image.length);
 				}
