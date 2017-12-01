@@ -10,19 +10,6 @@
 #include "camera.h"
 #include <pthread.h>
 
-
-
-// int try_open_camera(struct global_state* state)
-// {
-//     state->cam = camera_open();
-//     if (!state->cam){ // Check if null
-//         printf("axism3006v: Stream is null, can't connect to camera");
-//         return ERR_OPEN_STREAM;
-//     }
-//     return 0;
-// }
-
-
 struct global_state {
   camera* cam;
   int camera_is_open;
@@ -95,26 +82,12 @@ void* write_task(void *state)
     bytes[1] = (frame_size >> 16) & 0xFF;
     bytes[2] = (frame_size >> 8) & 0xFF;
     bytes[3] = frame_size & 0xFF;
-    //write(comm_fd, time_stamp, 100);
-
    write(comm_fd_write, bytes, 12);
    write(comm_fd_write, camera_byte, frame_size);
    frame_free(camera_frame);
   }
   return (void*) (intptr_t) 0;
 }
-
-// void* camera_open_task(void *state)
-// {
-//   struct global_state* s = state;
-//   s->cam = camera_open();
-//   if (!s->cam) {
-//     printf("Failed to create camera");
-//   }
-//   s->camera_is_open = 1;
-//   pthread_cond_broadcast(&global_cond);
-//   return (void*) (intptr_t) 0;
-// }
 
 
 int main(int argc, char *argv[])

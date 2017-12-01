@@ -10,13 +10,20 @@ public class ClientConnectionThread extends Thread {
 
 	private ClientSharedData monitor;
 	private String host;
-	private int port;
+	private int readPort;
+	private int writePort;
 	private boolean reconnect;
 	
-	public ClientConnectionThread(ClientSharedData mon, String host, int port) {
+	public ClientConnectionThread(
+			ClientSharedData mon, 
+			String host, 
+			int readPort,
+			int writePort
+		) {
 		monitor = mon;
 		this.host = host;
-		this.port = port;
+		this.writePort = writePort;
+		this.readPort = readPort;
 		reconnect = false;
 	}
 	
@@ -29,8 +36,8 @@ public class ClientConnectionThread extends Thread {
 				if (reconnect) Thread.sleep(1000);
 				
 				// Establish connection
-				Socket socketRead = new Socket("argus-4.student.lth.se", 19999);
-				Socket socketWrite = new Socket("argus-4.student.lth.se", 22000);
+				Socket socketRead = new Socket(host, readPort);
+				Socket socketWrite = new Socket(host, writePort);
 				
 				// Configure socket to immediately send data.
 				// This is good for streaming.
