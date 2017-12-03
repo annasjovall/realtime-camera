@@ -48,11 +48,9 @@ public class MotionDetector extends Thread {
 				int[] timeStamp = stringToInt(httpRequest(URL + ":" + port));
 				if(timeStamp[0] - prev[0] >= 5) {
 					clientMonitor.setIdle(true);	//movie->idle
-					System.out.println("IDLE");
 				}
 				else if(timeStamp[0] - prev[0] < 5) {	//idle->movie
 					clientMonitor.setIdle(false);
-					System.out.println("MOVIE");
 				}
 				
 				prev = timeStamp;
@@ -63,7 +61,6 @@ public class MotionDetector extends Thread {
 	}
 	
 	private int[] stringToInt(String s) {
-		System.out.println(s);
 		String[] one = s.split(":");
 		int[] oneInt = new int[3];
 		for (int i = 0; i < 3; i++) {

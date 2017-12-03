@@ -169,25 +169,22 @@ public class MainWindow {
 		idleB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Hej Idle");
-				cm1.buttonIdleMovie(true, true);
-				cm2.buttonIdleMovie(true, true);
+				cm1.buttonIdleMovie(true);
+				cm2.buttonIdleMovie(true);
 			}
 		});
 		
 		movieB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Hej Movie");
-				cm1.buttonIdleMovie(true, false);
-				cm2.buttonIdleMovie(true, false);
+				cm1.buttonIdleMovie(false);
+				cm2.buttonIdleMovie(false);
 			}
 		});
 
 		autoB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Hej Auto");
 				cm1.buttonAuto();
 				cm2.buttonAuto();
 			}

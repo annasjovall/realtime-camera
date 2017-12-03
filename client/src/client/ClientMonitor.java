@@ -96,15 +96,7 @@ public class ClientMonitor {
 		return shutdown;
 	}
 	
-	public synchronized boolean waitUntilIdleChanged() {
-		while(prevIdle == idle) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+	public synchronized boolean getIdleMode() {
 		return idle;
 	}
 
@@ -129,11 +121,10 @@ public class ClientMonitor {
 		notifyAll();
 	}
 	
-	public synchronized void buttonIdleMovie(boolean mode, boolean idle) {
+	public synchronized void buttonIdleMovie(boolean idle) {
 		prevIdle = this.idle;
 		this.idle = idle;
-		forceMode = mode;
-		System.out.println("idle: " + idle + " forceMode: " + forceMode);
+		forceMode = true;
 		notifyAll();
 	}
 	

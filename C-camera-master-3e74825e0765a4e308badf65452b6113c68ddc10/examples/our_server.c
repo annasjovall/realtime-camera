@@ -47,6 +47,7 @@ void* read_task(void *state)
     if(read(comm_fd_read, read_byte, 1) < 0){
       comm_fd_read = accept(listen_fd, (struct sockaddr*) NULL, NULL);
     }
+    printf("%hhx", read_byte[0]);
     if(read_byte[0]){
       s->movie_mode=1;
       printf("ENTERING MOVIE MODE\n");
