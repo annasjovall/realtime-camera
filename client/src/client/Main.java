@@ -17,14 +17,14 @@ public class Main {
 			new ClientReceiver(camera1monitor),
 			new ClientConnectionThread(camera1monitor, "argus-4.student.lth.se", 22000, 19999),
 			new EventDispatcher(camera1monitor, mw),
-			new MotionDetector(camera1monitor, "http://argus-4.student.lth.se", 9091),
+			new MotionDetector(camera1monitor, "http://argus-4.student.lth.se", 9094),
 			new StatusDispatcher(camera1monitor,mw),
-			new ClientSender(camera1monitor)
-			// new ClientReceiver(camera2monitor),
-			// new ClientConnectionThread(camera2monitor, "argus-4.student.lth.se", 19999),
-			// new EventDispatcher(camera2monitor, mw),
-			// new ModeCheck(camera2monitor, "http://argus-1.student.lth.se", 8080),
-			// new StatusDispatcher(camera2monitor,mw)
+			new ClientSender(camera1monitor),
+			new ClientReceiver(camera2monitor),
+			new ClientConnectionThread(camera2monitor, "argus-3.student.lth.se", 22000, 19999),
+			new EventDispatcher(camera2monitor, mw),
+			new MotionDetector(camera2monitor, "http://argus-3.student.lth.se", 9094),
+			new StatusDispatcher(camera2monitor,mw)
 		};
 		
 		// Start threads

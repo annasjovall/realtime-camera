@@ -18,12 +18,10 @@ public class EventDispatcher extends Thread {
 			ClientMonitor.Data addToGui = clientMonitor.popUnpackedImage();
 			//mw.printToConsole("I got something");
 
-			if(clientMonitor.getCameraId() == 1) {
+			if(clientMonitor.getCameraId() == 1) 
 				mw.refreshCamera1(addToGui.buffer, 0);
-			} else {
+			else 
 				mw.refreshCamera2(addToGui.buffer, 0);
-			}
-		
 		}
 	}
 }

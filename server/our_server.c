@@ -75,7 +75,7 @@ void* write_task(void *state)
     if(s->movie_mode){
       usleep(1000);
     }else{
-      usleep(10000);
+      usleep(1000000);
     }
     frame* camera_frame = camera_get_frame(cam);
     byte* camera_byte = get_frame_bytes(camera_frame);

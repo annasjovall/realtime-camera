@@ -15,7 +15,7 @@
 
 A simple server that receives motion notifications from the Axis camera, and
 provides a minimal HTTP interface for getting motion detection info.
-It is basically a decoupling of the camera (which uses push notifications and 
+It is basically a decoupling of the camera (which uses push notifications and
 thus must be configured for each client) that provides a pull interface,
 allowing any number of clients to query for motion events without requiring
 reconfiguration of the camera.
@@ -74,7 +74,7 @@ of the server.
 // changed when the setup of the Axis cameras is changed.
 
 #ifndef MOTION_PORT
-#define MOTION_PORT 9090
+#define MOTION_PORT 9070
 #endif
 
 struct global_state {
@@ -274,7 +274,7 @@ static long parse_motion_request(const char* buf, size_t sz, struct global_state
       r = strncmp(buf+11, "?Message=",9);
       if(r){
 	printf("Warning: parse_motion_request: no Message param, setting to zero\n");
-	state-> t_remote = 0; 
+	state-> t_remote = 0;
       } else {
 	const char* c = buf+11+9;
 	state-> t_remote = atol(c);

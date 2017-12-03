@@ -55,7 +55,6 @@ public class MotionDetector extends Thread {
 				
 				prev = timeStamp;
 			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		}
 	}

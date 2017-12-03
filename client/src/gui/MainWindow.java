@@ -35,13 +35,13 @@ public class MainWindow {
 		JPanel p2 = new JPanel();
 		JPanel textPanel = new JPanel();
 		
-		JTextField tf1 = new JTextField("http://argus-1.student.lth.se");
-		JTextField port1 = new JTextField("5050");
-		JTextField port2 = new JTextField("5050");
+		JTextField tf1 = new JTextField("Host");
+		JTextField port1 = new JTextField("Read port");
+		JTextField port2 = new JTextField("Write port");
 
-		JTextField tf2 = new JTextField("http://argus-1.student.lth.se");
-		JTextField port3 = new JTextField("5050");
-		JTextField port4 = new JTextField("5050");
+		JTextField tf2 = new JTextField("Host");
+		JTextField port3 = new JTextField("Read port");
+		JTextField port4 = new JTextField("Write port");
 		
 		JButton acceptServer1 = new JButton("Go");
 		JButton acceptServer2 = new JButton("Go");
@@ -197,6 +197,7 @@ public class MainWindow {
 				System.out.println("Hej Synkat");
 			}
 		});
+		
 
 		connectB.addActionListener(new ActionListener() {
 

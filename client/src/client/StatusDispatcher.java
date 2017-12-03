@@ -15,7 +15,7 @@ public class StatusDispatcher extends Thread{
 
 	public void run() {
 		while (true) {
-			boolean idle = clientMonitor.waitUntilIdleChanged();
+			boolean idle = clientMonitor.getIdleMode();
 			// mw.printToConsole("Switched modes");
 			mw.statusRefresh(idle);
 		}
