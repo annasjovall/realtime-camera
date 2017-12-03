@@ -1,3 +1,0 @@
-flags=-DFAKE
-compile:
-	gcc -DFAKE -pthread -o our_server our_server.c camera.c fakecapture.c server_common.c
