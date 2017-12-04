@@ -7,7 +7,6 @@ import java.io.InputStream;
 public class ReaderThread extends Thread {
 
 	private SharedData monitor;
-	private InputStream inputStream;
 
 	public ReaderThread(SharedData monitor) {
 		this.monitor = monitor;
@@ -17,7 +16,7 @@ public class ReaderThread extends Thread {
 		while (true) {
 			try {
 				monitor.waitUntilServerIsActive();
-				inputStream = monitor.getSocketRead().getInputStream();
+				InputStream inputStream = monitor.getSocketRead().getInputStream();
 				DataInputStream dataInputStream = new DataInputStream(inputStream);
 
 				int packageSize = dataInputStream.readInt();

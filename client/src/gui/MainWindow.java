@@ -82,8 +82,8 @@ public class MainWindow {
 
 		frame1 = new JLabel();
 		frame2 = new JLabel();
-		causedMoveMode1 = new JLabel("CAUSED MOVIE MODE");
-		causedMoveMode2 = new JLabel("CAUSED MOVIE MODE");
+		causedMoveMode1 = new JLabel();
+		causedMoveMode2 = new JLabel();
 		JPanel buttonPanel = new JPanel();
 		motionText = new JLabel();
 		connectionText = new JLabel();
@@ -145,6 +145,13 @@ public class MainWindow {
 		// f.pack();
 		window.setVisible(true);
 	}
+	
+	public void setCameraCausedMoveMode(int id) {
+		if (id == 1)
+			causedMoveMode1.setText("CAUSED MOVIE MODE");
+		else
+			causedMoveMode2.setText("CAUSED MOVIE MODE");
+	}
 
 	public void refreshCamera1(DataFrame dataFrame) {
 		byte[] image = dataFrame.getFrames();
@@ -172,6 +179,14 @@ public class MainWindow {
 		} else {
 			motionText.setText("Movie mode");
 		}
+	}
+	
+	public void setErrorMessage(String error, int cameraID) {
+//		if(cameraID == 1)
+//			connectButton1.setText("Connect");
+//		else
+//			connectButton2.setText("Connect");
+		console.setText(error);
 	}
 
 	private String parseTimeStamp(long cameraTime) {

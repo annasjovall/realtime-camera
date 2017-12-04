@@ -3,8 +3,6 @@ package client;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -17,11 +15,9 @@ public class SharedData {
 	private boolean isConnected;
 	private Socket socketRead;
 	private Socket socketWrite;
-	private Socket socketMotion;
 	private String host = "";
 	private int serverReadPort;
 	private int serverWritePort;
-	private final int MOTION_PORT = 9094;
 	private volatile boolean forceMode;
 	private int prevMode = IDLE_MODE;
 	private int mode = IDLE_MODE;
@@ -38,17 +34,14 @@ public class SharedData {
 	}
 
 	public synchronized void waitUntilServerIsActive() throws InterruptedException {
-		while (!serverActive) wait();
+		while (!serverActive)
+			wait();
 	}
-	
+
 	public synchronized DataFrame popUnpackedImage() throws InterruptedException {
 		while (unPackedImages.isEmpty())
 			wait();
 		return unPackedImages.poll();
-	}
-
-	public synchronized void waitUntilDisconnect() throws InterruptedException {
-		while (isConnected) wait();
 	}
 
 	public synchronized void disconnect() {
@@ -78,16 +71,18 @@ public class SharedData {
 		return socketRead;
 	}
 
-	public synchronized Socket getSocketMotion() {
-		return socketMotion;
+	public synchronized String getHost() {
+		return host;
 	}
 
-	public synchronized void trySetMode(int mode) {
+	public synchronized boolean trySetMode(int mode) {
 		if (!forceMode) {
 			prevMode = this.mode;
 			this.mode = mode;
 			notifyAll();
+			return true;
 		}
+		return false;
 	}
 
 	public synchronized int getMode() throws InterruptedException {
@@ -109,31 +104,31 @@ public class SharedData {
 		notifyAll();
 	}
 
-	public synchronized void createSockets() throws SocketException {
+	public synchronized boolean createSockets() {
 		try {
 			socketRead = new Socket(host, serverWritePort);
 			socketWrite = new Socket(host, serverReadPort);
-			socketMotion = new Socket(host, MOTION_PORT);
-		} catch (UnknownHostException e) {
-			// TODO: Set error to user
+			socketRead.setTcpNoDelay(true);
+			socketWrite.setTcpNoDelay(true);
+			serverActive = true;
 		} catch (IOException e) {
+			serverActive = false;
 			isConnected = false;
 		}
-		// TODO: Catch exception
-		socketRead.setTcpNoDelay(true);
-		socketWrite.setTcpNoDelay(true);
-		serverActive = true;
 		notifyAll();
+		return serverActive;
 	}
 
-	public synchronized void closeSockets() throws IOException {
+	public synchronized void closeSockets() throws IOException, InterruptedException {
+		while (isConnected)
+			wait();
 		OutputStream os = socketWrite.getOutputStream();
 		byte[] disconnect = new byte[1];
 		disconnect[0] = (byte) 9;
 		os.write(disconnect);
 		socketRead.close();
 		socketWrite.close();
-		socketMotion.close();
+		os.flush();
 		serverActive = false;
 		notifyAll();
 	}
