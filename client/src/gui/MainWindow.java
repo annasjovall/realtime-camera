@@ -9,6 +9,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+import client.DataFrame;
 import client.SharedData;
 
 public class MainWindow {
@@ -135,19 +136,24 @@ public class MainWindow {
 		window.setVisible(true);
 	}
 
-	public void refreshCamera1(byte[] img) {
-		if (img == null)
-			return;
-		ImageIcon icon = new ImageIcon(img);
-		frame1.setIcon(icon);
-		
+	public void refreshCamera1(DataFrame dataFrame) {
+		byte[] image = dataFrame.getFrames();
+		String timeStamp = dataFrame.getTimeStamp();
+		if (image != null && timeStamp != null) {
+			ImageIcon icon = new ImageIcon(image);
+			frame1.setIcon(icon);
+			System.out.println("delay camera 1: " + timeStamp);
+		}
 	}
 	
-	public void refreshCamera2(byte[] img){
-		if (img == null)
-			return;
-		ImageIcon icon = new ImageIcon(img);
-		frame2.setIcon(icon);
+	public void refreshCamera2(DataFrame dataFrame) {
+		byte[] image = dataFrame.getFrames();
+		String timeStamp = dataFrame.getTimeStamp();
+		if (image != null && timeStamp != null) {
+			ImageIcon icon = new ImageIcon(image);
+			frame1.setIcon(icon);
+			System.out.println("delay camera 2: " + timeStamp);
+		}
 	}
 
 	public void statusRefresh(int mode) {

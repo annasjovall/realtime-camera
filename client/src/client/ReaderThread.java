@@ -21,14 +21,12 @@ public class ReaderThread extends Thread {
 				DataInputStream dataInputStream = new DataInputStream(inputStream);
 
 				int packageSize = dataInputStream.readInt();
-				
 				String timeStamp = parseTimeStamp(dataInputStream.readInt());
 
 				byte[] frames = new byte[packageSize];
 				for (int i = 0; i < packageSize; i++)
 					frames[i] = dataInputStream.readByte();
-
-				monitor.addToQueue(timeStamp, frames);
+				monitor.addToQueue(new DataFrame(timeStamp, frames));
 				
 			} catch (IOException e) {
 				monitor.disconnect();
@@ -41,6 +39,7 @@ public class ReaderThread extends Thread {
 
 	private String parseTimeStamp(int cameraTime) {
 		long currentTime = System.currentTimeMillis();
-		return (currentTime - cameraTime) + "";
+		long delay = currentTime - cameraTime;
+		return delay + "";
 	}
 }
