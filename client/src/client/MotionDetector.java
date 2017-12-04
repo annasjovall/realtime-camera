@@ -14,7 +14,7 @@ public class MotionDetector extends Thread {
 	private MainWindow window;
 	private int clientID;
 	
-	private final int PORT = 9094;
+	private final int PORT = 9091;
 	
 	public MotionDetector(SharedData monitor, MainWindow window, int clientID, CamerasSharedData cameraMonitor) {
 		this.monitor = monitor;	
