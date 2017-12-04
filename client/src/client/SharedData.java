@@ -9,6 +9,7 @@ import java.util.Queue;
 public class SharedData {
 	public static final int IDLE_MODE = 0;
 	public static final int MOVIE_MODE = 1;
+	public static final int DISCONNECT_MODE = 9;
 
 	private Queue<DataFrame> unPackedImages;
 	private boolean serverActive;
@@ -50,8 +51,8 @@ public class SharedData {
 	}
 
 	public synchronized void connect(String host, String serverReadPort, String serverWritePort) {
-		isConnected = true;
 		this.host = host;
+		isConnected = true;
 		// TODO: Kolla så att dom är rimliga
 		this.serverReadPort = Integer.parseInt(serverReadPort);
 		this.serverWritePort = Integer.parseInt(serverWritePort);
@@ -85,7 +86,7 @@ public class SharedData {
 		return false;
 	}
 
-	public synchronized int getMode() throws InterruptedException {
+	public synchronized int getMode() throws InterruptedException, IOException {
 		while (mode == prevMode)
 			wait();
 		prevMode = mode;
@@ -120,15 +121,10 @@ public class SharedData {
 	}
 
 	public synchronized void closeSockets() throws IOException, InterruptedException {
-		while (isConnected)
+		while (isConnected){
 			wait();
-		OutputStream os = socketWrite.getOutputStream();
-		byte[] disconnect = new byte[1];
-		disconnect[0] = (byte) 9;
-		os.write(disconnect);
-		socketRead.close();
-		socketWrite.close();
-		os.flush();
+		}
+		this.mode = DISCONNECT_MODE;
 		serverActive = false;
 		notifyAll();
 	}

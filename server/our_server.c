@@ -43,11 +43,11 @@ void* read_task(void *state)
       comm_fd_read = accept(listen_fd, (struct sockaddr*) NULL, NULL);
       s->reader_running = 1;
       printf("READERRUNNING\n");
-
     }
     usleep(1000);
     char read_byte[1];
     read(comm_fd_read, read_byte, 1);
+    printf("%c\n", read_byte[0]);
     if(read_byte[0] == 1){
       s->movie_mode=1;
       printf("ENTERING MOVIE MODE\n");
@@ -90,11 +90,7 @@ void* write_task(void *state)
       s->writer_running = 1;
       printf("WRITERRUNNING\n");
     }
-    if(s->movie_mode){
-      usleep(250000);
-    }else{
-      usleep(5000000);
-    }
+
     frame* camera_frame = camera_get_frame(cam);
     byte* camera_byte = get_frame_bytes(camera_frame);
     size_t frame_size = get_frame_size(camera_frame);
@@ -122,6 +118,11 @@ void* write_task(void *state)
     write(comm_fd_write, &header, 12);
     write(comm_fd_write, camera_byte, frame_size);
     frame_free(camera_frame);
+    if(s->movie_mode){
+      usleep(4000);
+    }else{
+      usleep(5000000);
+    }
   }
   return (void*) (intptr_t) 0;
 }

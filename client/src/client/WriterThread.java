@@ -22,14 +22,16 @@ public class WriterThread extends Thread {
 				clientMonitor.waitUntilServerIsActive();
 				Socket socket = clientMonitor.getSocketWrite();
 				OutputStream os = socket.getOutputStream();
-
 				int mode = clientMonitor.getMode();
 				window.statusRefresh(mode);
 				byte[] byteMode = new byte[1];
 				byteMode[0] = (byte) mode;
 				os.write(byteMode);
-
 				os.flush();
+				if(mode==9){
+					clientMonitor.getSocketRead().close();
+					clientMonitor.getSocketWrite().close();
+				}
 			} catch (IOException e) {
 				clientMonitor.disconnect();
 			} catch (InterruptedException e) {
