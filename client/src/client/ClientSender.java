@@ -20,7 +20,6 @@ public class ClientSender extends Thread {
 		while (true) {
 			try {
 				clientMonitor.waitUntilServerIsActive();
-				System.out.println("SENDER THREAD STARTED");
 				Socket socket = clientMonitor.getSocketWrite();
 				OutputStream os = socket.getOutputStream();
 

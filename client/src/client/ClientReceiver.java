@@ -17,7 +17,6 @@ public class ClientReceiver extends Thread {
 		while (true) {
 			try {
 				clientMonitor.waitUntilServerIsActive();
-				System.out.println("RECIVER THREAD STARTED");
 				is = clientMonitor.getSocketRead().getInputStream();
 				DataInputStream in = new DataInputStream(is);
 
