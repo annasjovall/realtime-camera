@@ -18,7 +18,7 @@ public class SharedData {
 	private String host = "";
 	private int serverReadPort;
 	private int serverWritePort;
-	private volatile boolean forceMode;
+	private boolean forceMode;
 	private int prevMode = IDLE_MODE;
 	private int mode = IDLE_MODE;
 
