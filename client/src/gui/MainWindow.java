@@ -9,43 +9,49 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
-import client.ClientMonitor;
+import client.SharedData;
 
 public class MainWindow {
-	ClientMonitor cm1;
-	ClientMonitor cm2;
-	JLabel l;
-	JLabel l2;
+	SharedData monitor1;
+	SharedData monitor2;
+	JLabel frame1;
+	JLabel frame2;
 	JLabel motionText;
 	JLabel connectionText;
 	JButton idleB;
 	JButton movieB;
 	JButton autoB;
 	JButton syncB;
-	JButton connectB1;
-	JButton connectB2;
+	JButton connectButton1;
+	JButton connectButton2;
 	JTextArea console;
+	JTextField serverHost1;
+	JTextField serverHost2;
+	JTextField serverWritePort1;
+	JTextField serverWritePort2;
+	JTextField serverReadPort1;
+	JTextField serverReadPort2;
 	
-	public MainWindow(ClientMonitor cm1, ClientMonitor cm2) {
-		this.cm1 = cm1;
-		this.cm2 = cm2;
+	public MainWindow(SharedData monitor1, SharedData monitor2) {
+		this.monitor1 = monitor1;
+		this.monitor2 = monitor2;
 
 		//Setup: add frame, panels, text
-		JFrame f = new JFrame();
-		JPanel p = new JPanel();
-		JPanel p2 = new JPanel();
+		JFrame window = new JFrame();
+		JPanel panel1 = new JPanel();
+		JPanel panel2 = new JPanel();
 		JPanel textPanel = new JPanel();
 		
-		JTextField tf1 = new JTextField("Host");
-		JTextField port1 = new JTextField("Read port");
-		JTextField port2 = new JTextField("Write port");
+		serverHost1 = new JTextField("argus-2.student.lth.se");
+		serverWritePort1 = new JTextField("19999");
+		serverReadPort1 = new JTextField("22000");
 
-		JTextField tf2 = new JTextField("Host");
-		JTextField port3 = new JTextField("Read port");
-		JTextField port4 = new JTextField("Write port");
+		serverHost2 = new JTextField("Host");
+		serverWritePort2 = new JTextField("Read port");
+		serverReadPort2 = new JTextField("Write port");
 		
-		connectB1 = new JButton("Connect");
-		connectB2 = new JButton("Connect");
+		connectButton1 = new JButton("Connect");
+		connectButton2 = new JButton("Connect");
 		JPanel leftPanel = new JPanel(new GridLayout(1,3));
 		JPanel rightPanel = new JPanel(new GridLayout(1,3));
 		JPanel southPanel = new JPanel(new BorderLayout());
@@ -55,31 +61,31 @@ public class MainWindow {
 		console = new JTextArea("");
 		JScrollPane scrollis = new JScrollPane(console);
 		
-		leftPanel.add(tf1);
-		leftPanel.add(port1);
-		leftPanel.add(port2);
-		leftPanel.add(connectB1);
-		rightPanel.add(tf2);
-		rightPanel.add(port3);
-		rightPanel.add(port4);
-		rightPanel.add(connectB2);
+		leftPanel.add(serverHost1);
+		leftPanel.add(serverWritePort1);
+		leftPanel.add(serverReadPort1);
+		leftPanel.add(connectButton1);
+		rightPanel.add(serverHost2);
+		rightPanel.add(serverWritePort2);
+		rightPanel.add(serverReadPort2);
+		rightPanel.add(connectButton2);
 		
 		console.setEditable(false);
 		console.setMaximumSize(new Dimension(150, 150));
 		console.setMinimumSize(new Dimension(100, 100));
 		
-		l = new JLabel();
-		l2 = new JLabel();
+		frame1 = new JLabel();
+		frame2 = new JLabel();
 		JPanel buttonPanel = new JPanel();
 		motionText = new JLabel();
 		connectionText = new JLabel();
 		motionText.setText("Motion server disconnected...");
 		connectionText.setText("Capture server not connected...");
-		f.setLayout(new BorderLayout());
-		f.setTitle("Camera surveillance system");
-		f.setSize(new Dimension(1800, 700)); // default size is 0,0
-		f.setLocation(10, 200); // default is 0,0 (top left corner)
-		f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		window.setLayout(new BorderLayout());
+		window.setTitle("Camera surveillance system");
+		window.setSize(new Dimension(1800, 700)); // default size is 0,0
+		window.setLocation(10, 200); // default is 0,0 (top left corner)
+		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		//add Buttons
 		idleB = new JButton("Idle");
@@ -90,8 +96,8 @@ public class MainWindow {
 		//Add components: images to labels
 		ImageIcon icon = new ImageIcon();
 		ImageIcon icon2 = new ImageIcon();
-		l.setIcon(icon);
-		l2.setIcon(icon2);
+		frame1.setIcon(icon);
+		frame2.setIcon(icon2);
 
 		//Add components: Buttons to buttonpanel
 		buttonPanel.add(idleB);
@@ -101,8 +107,8 @@ public class MainWindow {
 		//Add eventlisteners to buttons
 		listeners();
 		
-		p.setLayout(new BorderLayout());
-		p2.setLayout(new BorderLayout());
+		panel1.setLayout(new BorderLayout());
+		panel2.setLayout(new BorderLayout());
 		//Add components: items to panels
 		textPanel.add(connectionText,BorderLayout.WEST);
 		textPanel.add(stupidLabel, BorderLayout.CENTER);
@@ -110,42 +116,42 @@ public class MainWindow {
 		
 		
 		
-		p.add(l,BorderLayout.CENTER);
-		p.add(leftPanel,BorderLayout.NORTH);
-		p.add(leftSyncMsg, BorderLayout.SOUTH);
-		p2.add(l2,BorderLayout.CENTER);
-		p2.add(rightPanel, BorderLayout.NORTH);
-		p2.add(rightSyncMsg, BorderLayout.SOUTH);
+		panel1.add(frame1,BorderLayout.CENTER);
+		panel1.add(leftPanel,BorderLayout.NORTH);
+		panel1.add(leftSyncMsg, BorderLayout.SOUTH);
+		panel2.add(frame2,BorderLayout.CENTER);
+		panel2.add(rightPanel, BorderLayout.NORTH);
+		panel2.add(rightSyncMsg, BorderLayout.SOUTH);
 		
 		southPanel.add(buttonPanel,BorderLayout.NORTH);
 		southPanel.add(scrollis,BorderLayout.CENTER);
 		
 		//Add components: panels to frame
-		f.add(textPanel, BorderLayout.NORTH);
-		f.add(p, BorderLayout.WEST);
-		f.add(p2, BorderLayout.EAST);
-		f.add(southPanel, BorderLayout.PAGE_END);
+		window.add(textPanel, BorderLayout.NORTH);
+		window.add(panel1, BorderLayout.WEST);
+		window.add(panel2, BorderLayout.EAST);
+		window.add(southPanel, BorderLayout.PAGE_END);
 		//f.pack();
-		f.setVisible(true);
+		window.setVisible(true);
 	}
 
-	public void refreshCamera1(byte[] img, int camera) {
+	public void refreshCamera1(byte[] img) {
 		if (img == null)
 			return;
 		ImageIcon icon = new ImageIcon(img);
-		l.setIcon(icon);
+		frame1.setIcon(icon);
 		
 	}
 	
-	public void refreshCamera2(byte[] img, int camera){
+	public void refreshCamera2(byte[] img){
 		if (img == null)
 			return;
 		ImageIcon icon = new ImageIcon(img);
-		l2.setIcon(icon);
+		frame2.setIcon(icon);
 	}
 
-	public void statusRefresh(boolean idle) {
-		if (idle) {
+	public void statusRefresh(int mode) {
+		if (mode == SharedData.IDLE_MODE) {
 			motionText.setText("Idle mode");
 		} else {
 			motionText.setText("Movie mode");
@@ -168,24 +174,24 @@ public class MainWindow {
 		idleB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cm1.forceSetMode(true);
-				cm2.forceSetMode(true);
+				monitor1.forceSetMode(SharedData.IDLE_MODE);
+				monitor2.forceSetMode(SharedData.IDLE_MODE);
 			}
 		});
 		
 		movieB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cm1.forceSetMode(false);
-				cm2.forceSetMode(false);
+				monitor1.forceSetMode(SharedData.MOVIE_MODE);
+				monitor2.forceSetMode(SharedData.MOVIE_MODE);
 			}
 		});
 
 		autoB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cm1.closeForceMode();
-				cm2.closeForceMode();
+				monitor1.closeForceMode();
+				monitor2.closeForceMode();
 			}
 		});
 
@@ -198,33 +204,41 @@ public class MainWindow {
 		});
 		
 
-		connectB1.addActionListener(new ActionListener() {
+		connectButton1.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String text = connectB1.getText();
-				if (text == "Connect") {
-					cm1.buttonConnection(true);
-					connectB1.setText("Disconnect");
+				String buttonLabel = connectButton1.getText();
+				//TODO: Kolla så att vi bara skickar in int
+				String host = serverHost1.getText();
+				String serverReadPort = serverReadPort1.getText();
+				String serverWritePort = serverWritePort1.getText();
+				if (buttonLabel == "Connect") {
+					monitor1.connect(host, serverReadPort, serverWritePort);
+					connectButton1.setText("Disconnect");
 				} else {
-					cm1.buttonConnection(false);
-					connectB1.setText("Connect");
+					monitor1.disconnect();
+					connectButton1.setText("Connect");
 				}
 				
 			}
 		});
 		
-		connectB2.addActionListener(new ActionListener() {
+		connectButton2.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String text = connectB2.getText();
+				String text = connectButton2.getText();
+				//TODO: Kolla så att vi bara skickar in int
+				String host = serverHost2.getText();
+				String serverReadPort = serverReadPort2.getText();
+				String serverWritePort = serverWritePort2.getText();
 				if (text == "Connect") {
-					cm2.buttonConnection(true);
-					connectB2.setText("Disconnect");
+					monitor2.connect(host, serverReadPort, serverWritePort);
+					connectButton2.setText("Disconnect");
 				} else {
-					cm2.buttonConnection(false);
-					connectB2.setText("Connect");
+					monitor2.disconnect();
+					connectButton2.setText("Connect");
 				}
 				
 			}
