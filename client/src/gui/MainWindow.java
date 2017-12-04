@@ -168,24 +168,24 @@ public class MainWindow {
 		idleB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cm1.forceSetMode(true);
-				cm2.forceSetMode(true);
+				//cm1.forceSetMode(true);
+				//cm2.forceSetMode(true);
 			}
 		});
 		
 		movieB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cm1.forceSetMode(false);
-				cm2.forceSetMode(false);
+				//cm1.forceSetMode(false);
+				//cm2.forceSetMode(false);
 			}
 		});
 
 		autoB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cm1.closeForceMode();
-				cm2.closeForceMode();
+				//cm1.closeForceMode();
+				//cm2.closeForceMode();
 			}
 		});
 

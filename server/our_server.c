@@ -119,6 +119,7 @@ int main(int argc, char *argv[])
 
   pthread_join(thread_ids[0], NULL);
   pthread_join(thread_ids[1], NULL);
+  printf("HEJ");
 
   return 0;
 }
