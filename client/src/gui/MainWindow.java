@@ -52,13 +52,13 @@ public class MainWindow {
 		JPanel innerPanel2 = new JPanel();
 		JPanel textPanel = new JPanel();
 
-		serverHost1 = new JTextField("argus-2.student.lth.se");
+		serverHost1 = new JTextField("argus-5.student.lth.se");
 		serverWritePort1 = new JTextField("19999");
 		serverReadPort1 = new JTextField("22000");
 
-		serverHost2 = new JTextField("Host");
-		serverWritePort2 = new JTextField("Read port");
-		serverReadPort2 = new JTextField("Write port");
+		serverHost2 = new JTextField("argus-7.student.lth.se");
+		serverWritePort2 = new JTextField("19999");
+		serverReadPort2 = new JTextField("22000");
 
 		connectButton1 = new JButton("Connect");
 		connectButton2 = new JButton("Connect");
@@ -67,7 +67,7 @@ public class MainWindow {
 		JPanel southPanel = new JPanel(new BorderLayout());
 		currentDelay1 = new JLabel();
 		currentDelay2 = new JLabel();
-		JLabel stupidLabel = new JLabel(" | ");
+		JLabel divisor = new JLabel(" | ");
 		console = new JTextArea("");
 		JScrollPane scrollis = new JScrollPane(console);
 
@@ -122,9 +122,9 @@ public class MainWindow {
 		panel1.setLayout(new BorderLayout());
 		panel2.setLayout(new BorderLayout());
 		// Add components: items to panels
-		textPanel.add(syncModeDisplay, BorderLayout.WEST);
-		textPanel.add(stupidLabel, BorderLayout.CENTER);
-		textPanel.add(modeDisplay, BorderLayout.EAST);
+		textPanel.add(modeDisplay, BorderLayout.WEST);
+		textPanel.add(divisor, BorderLayout.CENTER);
+		textPanel.add(syncModeDisplay, BorderLayout.EAST);
 
 		panel1.add(frame1, BorderLayout.CENTER);
 		panel1.add(leftPanel, BorderLayout.NORTH);
@@ -189,10 +189,9 @@ public class MainWindow {
 	
 	public void syncModeRefresh(int syncMode) {
 		if (syncMode == CamerasSharedData.SYNC_MODE) {
-			modeDisplay.setText("Syncronous");
-		} else {
-			modeDisplay.setText("Asyncronous");
-		}
+			syncModeDisplay.setText("Syncronous");
+		} else 
+			syncModeDisplay.setText("Asyncronous");
 	}
 	
 	public void setErrorMessage(String error, int cameraID) {
@@ -231,7 +230,14 @@ public class MainWindow {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Hej Synkat");
+				cameraMonitor.forceSetDisplayMode(CamerasSharedData.SYNC_MODE);
+			}
+		});
+		asyncB.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				cameraMonitor.forceSetDisplayMode(CamerasSharedData.ASYNC_MODE);
 			}
 		});
 

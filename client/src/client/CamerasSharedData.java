@@ -23,8 +23,13 @@ public class CamerasSharedData {
 		return displayMode;
 	}
 
-	public synchronized void setDisplayMode(int displayMode) {
-		this.displayMode = displayMode;
+	public synchronized boolean trySetDisplayMode(int displayMode) {
+		if (!forceMode) {
+			this.displayMode = displayMode;
+			notifyAll();
+			return true;
+		}
+		return false;
 	}
 
 	public synchronized boolean trySetMode(int mode) {
@@ -41,6 +46,13 @@ public class CamerasSharedData {
 		this.mode = mode;
 		notifyAll();
 	}
+	
+	public synchronized void forceSetDisplayMode(int mode) {
+		forceMode = true;
+		this.displayMode = mode;
+		notifyAll();
+	}
+
 
 	public void exitForceMode() {
 		forceMode = false;

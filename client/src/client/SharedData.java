@@ -50,7 +50,6 @@ public class SharedData {
 	public synchronized void connect(String host, String serverReadPort, String serverWritePort) {
 		this.host = host;
 		isConnected = true;
-		// TODO: Kolla så att dom är rimliga
 		this.serverReadPort = Integer.parseInt(serverReadPort);
 		this.serverWritePort = Integer.parseInt(serverWritePort);
 		notifyAll();
@@ -92,6 +91,11 @@ public class SharedData {
 		while (isConnected){
 			wait();
 		}
+		OutputStream os = socketWrite.getOutputStream();
+		os.write(9);
+		os.flush();
+		socketWrite.close();
+		socketRead.close();
 		serverActive = false;
 		notifyAll();
 	}
