@@ -16,6 +16,7 @@ public class ClientConnectionThread extends Thread {
 				clientMonitor.tryConnect();
 				clientMonitor.createSockets();
 				clientMonitor.waitUntilNotActive();
+				System.out.println("DISCONNECT");
 				clientMonitor.closeSockets();
 			} catch (InterruptedException | IOException e) {
 				e.printStackTrace();

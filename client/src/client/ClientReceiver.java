@@ -22,12 +22,10 @@ public class ClientReceiver extends Thread {
 
 				int len = in.readInt();
 				int timeStamp = in.readInt(); // TODO: Use Timestamp
-				System.out.println("LENGTH: " + len);
 				byte[] data = new byte[len];
 				for (int i = 0; i < len; i++) {
 					data[i] = in.readByte();
 				}
-				System.out.println(data.length);
 
 				clientMonitor.addToQueue("", data, data.length);
 			} catch (IOException e) {
