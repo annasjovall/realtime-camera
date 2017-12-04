@@ -189,10 +189,9 @@ public class MainWindow {
 	
 	public void syncModeRefresh(int syncMode) {
 		if (syncMode == CamerasSharedData.SYNC_MODE) {
-			modeDisplay.setText("Syncronous");
-		} else {
-			modeDisplay.setText("Asyncronous");
-		}
+			syncModeDisplay.setText("Syncronous");
+		} else 
+			syncModeDisplay.setText("Asyncronous");
 	}
 	
 	public void setErrorMessage(String error, int cameraID) {

@@ -21,7 +21,7 @@
   </class>  
   <class id="3" language="java" name="client.DataFrame" project="client" file="/client/src/client/DataFrame.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="727" y="339"/>    
+    <position height="-1" width="-1" x="713" y="158"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -30,7 +30,7 @@
   </class>  
   <class id="4" language="java" name="client.ConnectionThread" project="client" 
     file="/client/src/client/ConnectionThread.java" binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="168" y="631"/>    
+    <position height="-1" width="-1" x="144" y="631"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -39,7 +39,7 @@
   </class>  
   <class id="5" language="java" name="client.ReaderThread" project="client" file="/client/src/client/ReaderThread.java" 
     binary="false" corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="435" y="638"/>    
+    <position height="-1" width="-1" x="747" y="489"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
@@ -66,102 +66,127 @@
   </class>  
   <class id="8" language="java" name="client.Main" project="client" file="/client/src/client/Main.java" binary="false" 
     corner="BOTTOM_RIGHT">    
-    <position height="-1" width="-1" x="718" y="574"/>    
+    <position height="-1" width="-1" x="730" y="328"/>    
     <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
       sort-features="false" accessors="true" visibility="true">      
       <attributes public="true" package="true" protected="true" private="true" static="true"/>      
       <operations public="true" package="true" protected="true" private="true" static="true"/>    
     </display>  
   </class>  
-  <association id="9">    
+  <class id="9" language="java" name="client.MotionDetector" project="client" 
+    file="/client/src/client/MotionDetector.java" binary="false" corner="BOTTOM_RIGHT">    
+    <position height="-1" width="-1" x="490" y="667"/>    
+    <display autosize="true" stereotype="true" package="true" initial-value="false" signature="true" 
+      sort-features="false" accessors="true" visibility="true">      
+      <attributes public="true" package="true" protected="true" private="true" static="true"/>      
+      <operations public="true" package="true" protected="true" private="true" static="true"/>    
+    </display>  
+  </class>  
+  <association id="10">    
     <bendpoint x="327" y="292"/>    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="10" name="monitor2">        
+      <attribute id="11" name="monitor2">        
         <position height="0" width="0" x="17" y="225"/>      
       </attribute>      
-      <multiplicity id="11" minimum="0" maximum="1">        
+      <multiplicity id="12" minimum="0" maximum="1">        
         <position height="0" width="0" x="17" y="225"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="12">    
+  <association id="13">    
     <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="13" name="window"/>      
-      <multiplicity id="14" minimum="0" maximum="1"/>    
+      <attribute id="14" name="window"/>      
+      <multiplicity id="15" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="15">    
+  <association id="16">    
     <bendpoint x="317" y="387"/>    
     <end type="SOURCE" refId="1" navigable="false">      
-      <attribute id="16" name="monitor1">        
+      <attribute id="17" name="monitor1">        
         <position height="0" width="0" x="17" y="225"/>      
       </attribute>      
-      <multiplicity id="17" minimum="0" maximum="1">        
+      <multiplicity id="18" minimum="0" maximum="1">        
         <position height="0" width="0" x="17" y="225"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="18">    
+  <association id="19">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="20" name="window"/>      
+      <multiplicity id="21" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="1" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="22">    
     <end type="SOURCE" refId="4" navigable="false">      
-      <attribute id="19" name="monitor"/>      
-      <multiplicity id="20" minimum="0" maximum="1"/>    
+      <attribute id="23" name="monitor"/>      
+      <multiplicity id="24" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="21">    
+  <association id="25">    
     <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="22" name="window"/>      
-      <multiplicity id="23" minimum="0" maximum="1"/>    
+      <attribute id="26" name="window"/>      
+      <multiplicity id="27" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="24">    
+  <association id="28">    
     <end type="SOURCE" refId="5" navigable="false">      
-      <attribute id="25" name="monitor"/>      
-      <multiplicity id="26" minimum="0" maximum="1"/>    
+      <attribute id="29" name="monitor"/>      
+      <multiplicity id="30" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="27">    
-    <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="28" name="monitor"/>      
-      <multiplicity id="29" minimum="0" maximum="1"/>    
+  <association id="31">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="32" name="monitor2"/>      
+      <multiplicity id="33" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="30">    
+  <association id="34">    
+    <end type="SOURCE" refId="9" navigable="false">      
+      <attribute id="35" name="monitor"/>      
+      <multiplicity id="36" minimum="0" maximum="1"/>    
+    </end>    
+    <end type="TARGET" refId="2" navigable="true"/>    
+    <display labels="true" multiplicity="true"/>  
+  </association>  
+  <association id="37">    
     <end type="SOURCE" refId="6" navigable="false">      
-      <attribute id="31" name="window"/>      
-      <multiplicity id="32" minimum="0" maximum="1"/>    
+      <attribute id="38" name="window"/>      
+      <multiplicity id="39" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="1" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="33">    
+  <association id="40">    
     <end type="SOURCE" refId="7" navigable="false">      
-      <attribute id="34" name="clientMonitor"/>      
-      <multiplicity id="35" minimum="0" maximum="1"/>    
+      <attribute id="41" name="clientMonitor"/>      
+      <multiplicity id="42" minimum="0" maximum="1"/>    
     </end>    
     <end type="TARGET" refId="2" navigable="true"/>    
     <display labels="true" multiplicity="true"/>  
   </association>  
-  <association id="36">    
+  <association id="43">    
     <end type="SOURCE" refId="2" navigable="false">      
-      <attribute id="37" name="unPackedImages">        
-        <position height="0" width="0" x="-10" y="305"/>      
+      <attribute id="44" name="unPackedImages">        
+        <position height="0" width="0" x="-24" y="124"/>      
       </attribute>      
-      <multiplicity id="38" minimum="0" maximum="2147483647">        
-        <position height="0" width="0" x="-10" y="305"/>      
+      <multiplicity id="45" minimum="0" maximum="2147483647">        
+        <position height="0" width="0" x="-24" y="124"/>      
       </multiplicity>    
     </end>    
     <end type="TARGET" refId="3" navigable="true"/>    
