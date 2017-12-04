@@ -42,20 +42,15 @@ void* read_task(void *state)
     if(!s->reader_running){
       comm_fd_read = accept(listen_fd, (struct sockaddr*) NULL, NULL);
       s->reader_running = 1;
-      printf("READERRUNNING\n");
-
     }
     usleep(1000);
     char read_byte[1];
     read(comm_fd_read, read_byte, 1);
     if(read_byte[0] == 1){
       s->movie_mode=1;
-      printf("ENTERING MOVIE MODE\n");
     }else if(read_byte[0] == 0){
       s->movie_mode=0;
-      printf("ENTERING IDLE MODE\n");
     }else if(read_byte[0] == 9){
-      printf("DISCONNECT\n");
       s->reader_running=0;
       s->writer_running=0;
     }
@@ -88,7 +83,6 @@ void* write_task(void *state)
     if(!s->writer_running){
       comm_fd_write = accept(listen_fd, (struct sockaddr*) NULL, NULL);
       s->writer_running = 1;
-      printf("WRITERRUNNING\n");
     }
     if(s->movie_mode){
       usleep(250000);
