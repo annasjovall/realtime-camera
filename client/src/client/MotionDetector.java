@@ -1,6 +1,7 @@
 package client;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -9,63 +10,41 @@ import gui.MainWindow;
 
 public class MotionDetector extends Thread {
 	private SharedData monitor;
-	private SharedData otherMonitor;
-	private final int PORT = 9091;
+	private SharedData monitor2;
 	private MainWindow window;
-	private int cameraId;
-	private int previousTimeStamp;
-
-	public MotionDetector(SharedData monitor, SharedData otherMonitor, MainWindow window, int cameraId) {
-		this.monitor = monitor;
-		this.otherMonitor = otherMonitor;
+	private int clientID;
+	
+	private final int PORT = 9094;
+	
+	public MotionDetector(SharedData monitor, SharedData monitor2, MainWindow window, int clientID) {
+		this.monitor = monitor;	
+		this.monitor2 = monitor2;
 		this.window = window;
-		this.cameraId = cameraId;
+		this.clientID = clientID;
 	}
 
 	public void run() {
 		while (true) {
 			try {
+				sleep(1000);
 				monitor.waitUntilServerIsActive();
-				int timeStamp = getTimeStamp(httpRequest("http://" + monitor.getHost() + ":" + PORT))[0];
-				if (timeStamp - previousTimeStamp >= 5) {
-					if (monitor.trySetMode(SharedData.IDLE_MODE)) {
-						otherMonitor.forceSetMode(SharedData.IDLE_MODE);
-					}
-				} else if (timeStamp - previousTimeStamp < 5) {
-					if (monitor.trySetMode(SharedData.MOVIE_MODE)) {
-						otherMonitor.forceSetMode(SharedData.MOVIE_MODE);
-						window.setCameraCausedMoveMode(cameraId);
+				URL url = new URL("http://" + monitor.getHost() + ":" + PORT);
+				HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+				BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				String input = bufferedReader.readLine();
+				String inputFirstColumn = input.split(":")[0];
+				long timeStamp = Long.parseLong(inputFirstColumn);
+				System.out.println("current: " + System.currentTimeMillis());
+				System.out.println("sent: " + timeStamp*1000);
+				if((System.currentTimeMillis() - timeStamp*1000) < 1000){
+					if(monitor.trySetMode(SharedData.MOVIE_MODE)){
+						monitor2.forceSetMode(SharedData.MOVIE_MODE);
+						window.setCameraCausedMoveMode(clientID);
 					}
 				}
-				previousTimeStamp = timeStamp;
-			} catch (Exception e1) {
-				e1.printStackTrace();
+			} catch (IOException | InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
-	}
-
-	private String httpRequest(String target) throws Exception {
-		StringBuffer response = new StringBuffer();
-
-		URL url = new URL(target);
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		connection.setRequestMethod("GET");
-		BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-
-		String inputLine = null;
-		while ((inputLine = in.readLine()) != null) {
-			response.append(inputLine);
-		}
-		in.close();
-		return response.toString();
-	}
-	
-	private int[] getTimeStamp(String httpResponse) {
-		String[] httpResponseFields = httpResponse.split(":");
-		int[] httpResponseFieldsInt = new int[3];
-		for (int i = 0; i < 3; i++) {
-			httpResponseFieldsInt[i] = Integer.parseInt(httpResponseFields[i]);
-		}
-		return httpResponseFieldsInt;
 	}
 }
