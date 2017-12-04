@@ -190,8 +190,8 @@ public class MainWindow {
 		autoB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				monitor1.closeForceMode();
-				monitor2.closeForceMode();
+				monitor1.exitForceMode();
+				monitor2.exitForceMode();
 			}
 		});
 

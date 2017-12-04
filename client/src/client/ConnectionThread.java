@@ -2,11 +2,11 @@ package client;
 
 import java.io.IOException;
 
-public class ClientConnectionThread extends Thread {
+public class ConnectionThread extends Thread {
 
 	private SharedData clientMonitor;
 
-	public ClientConnectionThread(SharedData mon) {
+	public ConnectionThread(SharedData mon) {
 		clientMonitor = mon;
 	}
 
@@ -21,7 +21,6 @@ public class ClientConnectionThread extends Thread {
 			} catch (InterruptedException | IOException e) {
 				e.printStackTrace();
 			}
-
 		}
 	}
 }

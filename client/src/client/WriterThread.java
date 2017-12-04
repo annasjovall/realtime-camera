@@ -6,12 +6,12 @@ import java.net.Socket;
 
 import gui.MainWindow;
 
-public class ClientSender extends Thread {
+public class WriterThread extends Thread {
 
 	private SharedData clientMonitor;
 	private MainWindow window;
 
-	public ClientSender(SharedData monitor, MainWindow window) {
+	public WriterThread(SharedData monitor, MainWindow window) {
 		this.clientMonitor = monitor;
 		this.window = window;
 	}

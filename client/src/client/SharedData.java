@@ -11,7 +11,7 @@ public class SharedData {
 	public static final int IDLE_MODE = 0;
 	public static final int MOVIE_MODE = 1;
 
-	private Queue<Data> unPackedImages;
+	private Queue<DataFrame> unPackedImages;
 	private boolean serverActive;
 	private boolean isConnected;
 	private Socket socketRead;
@@ -33,24 +33,12 @@ public class SharedData {
 		this.isConnected = false;
 	}
 
-	public class Data {
-		public String info;
-		public byte[] buffer;
-		public int size;
-
-		public Data(String inf, byte[] buf, int size) {
-			info = inf;
-			buffer = buf;
-			this.size = size;
-		}
-	}
-
 	public int getCameraId() {
 		return camera;
 	}
 
-	public synchronized void addToQueue(String string, byte[] buffer, int size) {
-		Data data = new Data(string, buffer, size);
+	public synchronized void addToQueue(String timeStamp, byte[] frames) {
+		DataFrame data = new DataFrame(timeStamp, frames);
 		unPackedImages.add(data);
 		notifyAll();
 	}
@@ -90,11 +78,11 @@ public class SharedData {
 		return socketRead;
 	}
 
-	public synchronized Socket getSocketMotion() {
-		return socketMotion;
-	}
+//	public synchronized Socket getSocketMotion() {
+//		return socketMotion;
+//	}
 
-	public synchronized Data popUnpackedImage() throws InterruptedException {
+	public synchronized DataFrame popUnpackedImage() throws InterruptedException {
 		while (unPackedImages.isEmpty())
 			wait();
 		return unPackedImages.poll();
@@ -122,7 +110,7 @@ public class SharedData {
 		notifyAll();
 	}
 
-	public synchronized void closeForceMode() {
+	public synchronized void exitForceMode() {
 		forceMode = false;
 		notifyAll();
 	}
