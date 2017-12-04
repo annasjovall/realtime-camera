@@ -17,11 +17,11 @@ public class SharedData {
 	private boolean isConnected;
 	private Socket socketRead;
 	private Socket socketWrite;
-	//private Socket socketMotion;
+	private Socket socketMotion;
 	private String host = "";
 	private int serverReadPort;
 	private int serverWritePort;
-	// private final int MOTION_PORT = 9094;
+	private final int MOTION_PORT = 9094;
 	private volatile boolean forceMode;
 	private int prevMode = IDLE_MODE;
 	private int mode = IDLE_MODE;
@@ -78,9 +78,9 @@ public class SharedData {
 		return socketRead;
 	}
 
-//	public synchronized Socket getSocketMotion() {
-//		return socketMotion;
-//	}
+	public synchronized Socket getSocketMotion() {
+		return socketMotion;
+	}
 
 	public synchronized void trySetMode(int mode) {
 		if (!forceMode) {
@@ -113,7 +113,7 @@ public class SharedData {
 		try {
 			socketRead = new Socket(host, serverWritePort);
 			socketWrite = new Socket(host, serverReadPort);
-			// socketMotion = new Socket(host, MOTION_PORT);
+			socketMotion = new Socket(host, MOTION_PORT);
 		} catch (UnknownHostException e) {
 			// TODO: Set error to user
 		} catch (IOException e) {
@@ -133,7 +133,7 @@ public class SharedData {
 		os.write(disconnect);
 		socketRead.close();
 		socketWrite.close();
-		// socketMotion.close();
+		socketMotion.close();
 		serverActive = false;
 		notifyAll();
 	}
