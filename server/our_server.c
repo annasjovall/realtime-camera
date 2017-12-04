@@ -17,7 +17,8 @@ struct global_state {
   int movie_mode;
   int read_port;
   int write_port;
-  int threads_running;
+  int reader_running;
+  int writer_running;
 };
 
 void* read_task(void *state)
@@ -36,21 +37,27 @@ void* read_task(void *state)
     perror("listen listenfd");
   }
   int comm_fd_read = accept(listen_fd, (struct sockaddr*) NULL, NULL);
+  s->reader_running = 1;
   while (1) {
-    usleep(10000);
-    char read_byte[1];
-    int readbyte = read(comm_fd_read, read_byte, 1);
-    printf("READBYTE %d\n", readbyte);
-    if(readbyte < 0){
+    if(!s->reader_running){
       comm_fd_read = accept(listen_fd, (struct sockaddr*) NULL, NULL);
+      s->reader_running = 1;
+      printf("READERRUNNING\n");
+
     }
-    printf("%d\n",  comm_fd_read);
-    if(read_byte[0]){
+    usleep(1000);
+    char read_byte[1];
+    read(comm_fd_read, read_byte, 1);
+    if(read_byte[0] == 1){
       s->movie_mode=1;
       printf("ENTERING MOVIE MODE\n");
-    }else if(!read_byte[0]){
+    }else if(read_byte[0] == 0){
       s->movie_mode=0;
       printf("ENTERING IDLE MODE\n");
+    }else if(read_byte[0] == 9){
+      printf("DISCONNECT\n");
+      s->reader_running=0;
+      s->writer_running=0;
     }
   }
   return (void*) (intptr_t) 0;
@@ -60,7 +67,6 @@ void* write_task(void *state)
 {
   camera* cam = camera_open();
   struct global_state* s = state;
-  s->threads_running = 1;
   if (!cam) {
     printf("Failed to create camera\n");
   }
@@ -77,11 +83,17 @@ void* write_task(void *state)
     perror("listen listenfd");
   }
   int comm_fd_write = accept(listen_fd, (struct sockaddr*) NULL, NULL);
+  s->writer_running = 1;
   while(1) {
+    if(!s->writer_running){
+      comm_fd_write = accept(listen_fd, (struct sockaddr*) NULL, NULL);
+      s->writer_running = 1;
+      printf("WRITERRUNNING\n");
+    }
     if(s->movie_mode){
-      usleep(1000);
+      usleep(250000);
     }else{
-      usleep(1000000);
+      usleep(5000000);
     }
     frame* camera_frame = camera_get_frame(cam);
     byte* camera_byte = get_frame_bytes(camera_frame);
@@ -107,16 +119,8 @@ void* write_task(void *state)
     header[9] = (time_stamp >> 16) & 0xFF;
     header[10] = (time_stamp >> 8) & 0xFF;
     header[11] = time_stamp & 0xFF;
-    printf("%lli\n", time_stamp);
-    int headerbyte = write(comm_fd_write, &header, 12);
-    printf("HEADERBYTE %d\n", headerbyte);
-    if(headerbyte < 0){
-      printf("HEJ");
-      comm_fd_write = accept(listen_fd, (struct sockaddr*) NULL, NULL);
-    }else{
-      int camerabyte = write(comm_fd_write, camera_byte, frame_size);
-    }
-    //printf("camera_byte %d\n", camerabyte);
+    write(comm_fd_write, &header, 12);
+    write(comm_fd_write, camera_byte, frame_size);
     frame_free(camera_frame);
   }
   return (void*) (intptr_t) 0;
@@ -127,6 +131,8 @@ int main(int argc, char *argv[])
 {
   struct global_state state;
   pthread_t thread_ids[2];
+  state.reader_running=0;
+  state.writer_running=0;
 
   if(argc==3) {
       state.read_port = atoi(argv[1]);
