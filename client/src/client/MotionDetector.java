@@ -10,15 +10,15 @@ import gui.MainWindow;
 
 public class MotionDetector extends Thread {
 	private SharedData monitor;
-	private SharedData monitor2;
+	private CamerasSharedData cameraMonitor;
 	private MainWindow window;
 	private int clientID;
 	
 	private final int PORT = 9094;
 	
-	public MotionDetector(SharedData monitor, SharedData monitor2, MainWindow window, int clientID) {
+	public MotionDetector(SharedData monitor, MainWindow window, int clientID, CamerasSharedData cameraMonitor) {
 		this.monitor = monitor;	
-		this.monitor2 = monitor2;
+		this.cameraMonitor = cameraMonitor;
 		this.window = window;
 		this.clientID = clientID;
 	}
@@ -34,11 +34,8 @@ public class MotionDetector extends Thread {
 				String input = bufferedReader.readLine();
 				String inputFirstColumn = input.split(":")[0];
 				long timeStamp = Long.parseLong(inputFirstColumn);
-				System.out.println("current: " + System.currentTimeMillis());
-				System.out.println("sent: " + timeStamp*1000);
 				if((System.currentTimeMillis() - timeStamp*1000) < 1000){
-					if(monitor.trySetMode(SharedData.MOVIE_MODE)){
-						monitor2.forceSetMode(SharedData.MOVIE_MODE);
+					if(cameraMonitor.trySetMode(CamerasSharedData.MOVIE_MODE)){
 						window.setCameraCausedMoveMode(clientID);
 					}
 				}

@@ -8,20 +8,23 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+import client.CamerasSharedData;
 import client.DataFrame;
 import client.SharedData;
 
 public class MainWindow {
 	SharedData monitor1;
 	SharedData monitor2;
+	CamerasSharedData cameraMonitor;
 	JLabel frame1;
 	JLabel frame2;
-	JLabel motionText;
-	JLabel connectionText;
+	JLabel modeDisplay;
+	JLabel syncModeDisplay;
 	JButton idleB;
 	JButton movieB;
 	JButton autoB;
 	JButton syncB;
+	JButton asyncB;
 	JButton connectButton1;
 	JButton connectButton2;
 	JTextArea console;
@@ -36,9 +39,10 @@ public class MainWindow {
 	JLabel causedMoveMode1;
 	JLabel causedMoveMode2;
 
-	public MainWindow(SharedData monitor1, SharedData monitor2) {
+	public MainWindow(SharedData monitor1, SharedData monitor2, CamerasSharedData cameraMonitor) {
 		this.monitor1 = monitor1;
 		this.monitor2 = monitor2;
+		this.cameraMonitor = cameraMonitor;
 
 		// Setup: add frame, panels, text
 		JFrame window = new JFrame();
@@ -85,10 +89,8 @@ public class MainWindow {
 		causedMoveMode1 = new JLabel();
 		causedMoveMode2 = new JLabel();
 		JPanel buttonPanel = new JPanel();
-		motionText = new JLabel();
-		connectionText = new JLabel();
-		motionText.setText("Motion server disconnected...");
-		connectionText.setText("Capture server disconnected...");
+		modeDisplay = new JLabel();
+		syncModeDisplay = new JLabel();
 		window.setLayout(new BorderLayout());
 		window.setTitle("Camera surveillance system");
 		window.setSize(new Dimension(1800, 700)); // default size is 0,0
@@ -100,6 +102,7 @@ public class MainWindow {
 		movieB = new JButton("Movie");
 		autoB = new JButton("Auto");
 		syncB = new JButton("Sync");
+		asyncB = new JButton("Async");
 
 		// Add components: images to labels
 		ImageIcon icon = new ImageIcon();
@@ -112,15 +115,16 @@ public class MainWindow {
 		buttonPanel.add(movieB);
 		buttonPanel.add(autoB);
 		buttonPanel.add(syncB);
+		buttonPanel.add(asyncB);
 		// Add eventlisteners to buttons
 		listeners();
 
 		panel1.setLayout(new BorderLayout());
 		panel2.setLayout(new BorderLayout());
 		// Add components: items to panels
-		textPanel.add(connectionText, BorderLayout.WEST);
+		textPanel.add(syncModeDisplay, BorderLayout.WEST);
 		textPanel.add(stupidLabel, BorderLayout.CENTER);
-		textPanel.add(motionText, BorderLayout.EAST);
+		textPanel.add(modeDisplay, BorderLayout.EAST);
 
 		panel1.add(frame1, BorderLayout.CENTER);
 		panel1.add(leftPanel, BorderLayout.NORTH);
@@ -147,9 +151,9 @@ public class MainWindow {
 	}
 	
 	public void setCameraCausedMoveMode(int id) {
-		if (id == 1)
+		if (id == 1 && causedMoveMode1.getText() == null)
 			causedMoveMode1.setText("CAUSED MOVIE MODE");
-		else
+		else if (id == 2 && causedMoveMode2.getText() == null)
 			causedMoveMode2.setText("CAUSED MOVIE MODE");
 	}
 
@@ -168,24 +172,30 @@ public class MainWindow {
 		String timeStamp = parseTimeStamp(dataFrame.getTimeStamp());
 		if (image != null && timeStamp != null) {
 			ImageIcon icon = new ImageIcon(image);
-			frame1.setIcon(icon);
+			frame2.setIcon(icon);
 			currentDelay2.setText("CURRENT DELAY: " + timeStamp + " ms");
 		}
 	}
 
-	public void statusRefresh(int mode) {
-		if (mode == SharedData.IDLE_MODE) {
-			motionText.setText("Idle mode");
+	public void modeStatusRefresh(int mode) {
+		if (mode == CamerasSharedData.IDLE_MODE) {
+			modeDisplay.setText("Idle mode");
+			causedMoveMode1.setText("");
+			causedMoveMode1.setText("");
 		} else {
-			motionText.setText("Movie mode");
+			modeDisplay.setText("Movie mode");
+		}
+	}
+	
+	public void syncModeRefresh(int syncMode) {
+		if (syncMode == CamerasSharedData.SYNC_MODE) {
+			modeDisplay.setText("Syncronous");
+		} else {
+			modeDisplay.setText("Asyncronous");
 		}
 	}
 	
 	public void setErrorMessage(String error, int cameraID) {
-//		if(cameraID == 1)
-//			connectButton1.setText("Connect");
-//		else
-//			connectButton2.setText("Connect");
 		console.setText(error);
 	}
 
@@ -199,24 +209,21 @@ public class MainWindow {
 		idleB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				monitor1.forceSetMode(SharedData.IDLE_MODE);
-				monitor2.forceSetMode(SharedData.IDLE_MODE);
+				cameraMonitor.forceSetMode(CamerasSharedData.IDLE_MODE);
 			}
 		});
 
 		movieB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				monitor1.forceSetMode(SharedData.MOVIE_MODE);
-				monitor2.forceSetMode(SharedData.MOVIE_MODE);
+				cameraMonitor.forceSetMode(CamerasSharedData.MOVIE_MODE);
 			}
 		});
 
 		autoB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				monitor1.exitForceMode();
-				monitor2.exitForceMode();
+				cameraMonitor.exitForceMode();
 			}
 		});
 

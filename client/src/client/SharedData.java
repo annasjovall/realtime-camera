@@ -7,8 +7,6 @@ import java.util.LinkedList;
 import java.util.Queue;
 
 public class SharedData {
-	public static final int IDLE_MODE = 0;
-	public static final int MOVIE_MODE = 1;
 
 	private Queue<DataFrame> unPackedImages;
 	private boolean serverActive;
@@ -18,13 +16,9 @@ public class SharedData {
 	private String host = "";
 	private int serverReadPort;
 	private int serverWritePort;
-	private boolean forceMode;
-	private int prevMode = IDLE_MODE;
-	private int mode = IDLE_MODE;
-
+	
 	public SharedData() {
 		this.unPackedImages = new LinkedList<>();
-		this.forceMode = false;
 		this.isConnected = false;
 	}
 
@@ -42,6 +36,10 @@ public class SharedData {
 		while (unPackedImages.isEmpty())
 			wait();
 		return unPackedImages.poll();
+	}
+	
+	public synchronized boolean hasImage() {
+		return !unPackedImages.isEmpty();
 	}
 
 	public synchronized void disconnect() {
@@ -75,35 +73,6 @@ public class SharedData {
 		return host;
 	}
 
-	public synchronized boolean trySetMode(int mode) {
-		if (!forceMode) {
-			prevMode = this.mode;
-			this.mode = mode;
-			notifyAll();
-			return true;
-		}
-		return false;
-	}
-
-	public synchronized int getMode() throws InterruptedException {
-		while (mode == prevMode)
-			wait();
-		prevMode = mode;
-		return mode;
-	}
-
-	public synchronized void forceSetMode(int mode) {
-		prevMode = this.mode;
-		this.mode = mode;
-		forceMode = true;
-		notifyAll();
-	}
-
-	public synchronized void exitForceMode() {
-		forceMode = false;
-		notifyAll();
-	}
-
 	public synchronized boolean createSockets() {
 		try {
 			socketRead = new Socket(host, serverWritePort);
@@ -131,5 +100,9 @@ public class SharedData {
 		os.flush();
 		serverActive = false;
 		notifyAll();
+	}
+
+	public boolean isConnected() {
+		return isConnected;
 	}
 }

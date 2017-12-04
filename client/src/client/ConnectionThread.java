@@ -22,7 +22,6 @@ public class ConnectionThread extends Thread {
 				monitor.tryConnect();
 				if (monitor.createSockets()) {
 					monitor.closeSockets();
-					System.out.println("disconnect");
 				} else {
 					window.setErrorMessage("Failed to connect to server.", cameraID);
 				}

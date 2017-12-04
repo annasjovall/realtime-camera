@@ -9,11 +9,13 @@ import gui.MainWindow;
 public class WriterThread extends Thread {
 
 	private SharedData clientMonitor;
+	private CamerasSharedData camerasMonitor;
 	private MainWindow window;
 
-	public WriterThread(SharedData monitor, MainWindow window) {
+	public WriterThread(SharedData monitor, MainWindow window, CamerasSharedData camMon) {
 		this.clientMonitor = monitor;
 		this.window = window;
+		this.camerasMonitor = camMon;
 	}
 
 	public void run() {
@@ -22,13 +24,13 @@ public class WriterThread extends Thread {
 				clientMonitor.waitUntilServerIsActive();
 				Socket socket = clientMonitor.getSocketWrite();
 				OutputStream os = socket.getOutputStream();
-
-				int mode = clientMonitor.getMode();
-				window.statusRefresh(mode);
+				sleep(1000);
+				int mode = camerasMonitor.getMode();
+				window.modeStatusRefresh(mode);
+				System.out.println(mode);
 				byte[] byteMode = new byte[1];
 				byteMode[0] = (byte) mode;
 				os.write(byteMode);
-
 				os.flush();
 			} catch (IOException e) {
 				clientMonitor.disconnect();
