@@ -91,8 +91,10 @@ void* write_task(void *state)
     header[6] = (time_stamp >> 8) & 0xFF;
     header[7] = time_stamp & 0xFF;
     if(write(comm_fd_write, &header, 8) < 0){
+      printf("HEJ");
       comm_fd_write = accept(listen_fd, (struct sockaddr*) NULL, NULL);
     }else if(write(comm_fd_write, camera_byte, frame_size) < 0){
+      printf("HEJ2");
       comm_fd_write = accept(listen_fd, (struct sockaddr*) NULL, NULL);
     }
     frame_free(camera_frame);
@@ -113,13 +115,12 @@ int main(int argc, char *argv[])
       state.read_port = 22000;
       state.write_port = 19999;
   }
-
+  state.movie_mode = 0;
   pthread_create(&thread_ids[0], NULL, read_task, &state);
   pthread_create(&thread_ids[1], NULL, write_task, &state);
 
   pthread_join(thread_ids[0], NULL);
   pthread_join(thread_ids[1], NULL);
-  printf("HEJ");
 
   return 0;
 }
