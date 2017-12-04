@@ -48,8 +48,8 @@ public class SharedData {
 	}
 
 	public synchronized void connect(String host, String serverReadPort, String serverWritePort) {
-		isConnected = true;
 		this.host = host;
+		isConnected = true;
 		// TODO: Kolla så att dom är rimliga
 		this.serverReadPort = Integer.parseInt(serverReadPort);
 		this.serverWritePort = Integer.parseInt(serverWritePort);
@@ -89,15 +89,9 @@ public class SharedData {
 	}
 
 	public synchronized void closeSockets() throws IOException, InterruptedException {
-		while (isConnected)
+		while (isConnected){
 			wait();
-		OutputStream os = socketWrite.getOutputStream();
-		byte[] disconnect = new byte[1];
-		disconnect[0] = (byte) 9;
-		os.write(disconnect);
-		socketRead.close();
-		socketWrite.close();
-		os.flush();
+		}
 		serverActive = false;
 		notifyAll();
 	}

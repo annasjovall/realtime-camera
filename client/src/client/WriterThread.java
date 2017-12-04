@@ -27,7 +27,7 @@ public class WriterThread extends Thread {
 				sleep(1000);
 				int mode = camerasMonitor.getMode();
 				window.modeStatusRefresh(mode);
-				System.out.println(mode);
+
 				byte[] byteMode = new byte[1];
 				byteMode[0] = (byte) mode;
 				os.write(byteMode);
