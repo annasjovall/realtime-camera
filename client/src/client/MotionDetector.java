@@ -5,14 +5,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class MotionDetector extends Thread {
-	private ClientMonitor clientMonitor;
+	private SharedData clientMonitor;
 	HttpURLConnection connection;
 	int[] prev;
 	String URL;
 	int port;
 	
 	//constructor
-	public MotionDetector(ClientMonitor m, String URL, int port) {
+	public MotionDetector(SharedData m, String URL, int port) {
 		this.clientMonitor = m;
 		prev = new int[3];
 		prev[0] = 0;
@@ -47,10 +47,10 @@ public class MotionDetector extends Thread {
 				
 				int[] timeStamp = stringToInt(httpRequest(URL + ":" + port));
 				if(timeStamp[0] - prev[0] >= 5) {
-					clientMonitor.setIdle(true);	//movie->idle
+					clientMonitor.trySetMode(0);	//movie->idle
 				}
 				else if(timeStamp[0] - prev[0] < 5) {	//idle->movie
-					clientMonitor.setIdle(false);
+					clientMonitor.trySetMode(1);
 				}
 				
 				prev = timeStamp;
