@@ -93,7 +93,7 @@ public class MainWindow {
 		syncModeDisplay = new JLabel();
 		window.setLayout(new BorderLayout());
 		window.setTitle("Camera surveillance system");
-		window.setSize(new Dimension(1800, 700)); // default size is 0,0
+		window.setSize(new Dimension(1300, 700)); // default size is 0,0
 		window.setLocation(10, 200); // default is 0,0 (top left corner)
 		window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

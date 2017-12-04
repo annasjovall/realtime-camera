@@ -26,7 +26,7 @@ public class ReaderThread extends Thread {
 				for (int i = 0; i < packageSize; i++)
 					frames[i] = dataInputStream.readByte();
 				monitor.addToQueue(new DataFrame(timeStamp, frames));
-				
+
 			} catch (IOException e) {
 				monitor.disconnect();
 			} catch (InterruptedException e) {

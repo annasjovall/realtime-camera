@@ -21,14 +21,12 @@ public class UpdateGUIThread extends Thread {
 		while (true) {
 			try {
 				//only one connected
+				sleep(1);
 				if (!monitor1.isConnected() && !monitor2.isConnected()) {
-					System.out.println("HEj0");
 				} else if (monitor1.isConnected() && !monitor2.isConnected()) {
-					System.out.println("HEj1");
 					if(monitor1.hasImage())
 						window.refreshCamera1(monitor1.popUnpackedImage());
 				} else if (!monitor1.isConnected() && monitor2.isConnected()) {
-					System.out.println("HEj2");
 					if(monitor2.hasImage())
 						window.refreshCamera2(monitor2.popUnpackedImage());
 				//async mode

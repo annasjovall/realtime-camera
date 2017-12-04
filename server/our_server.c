@@ -46,7 +46,6 @@ void* read_task(void *state)
     usleep(1000);
     char read_byte[1];
     read(comm_fd_read, read_byte, 1);
-    printf("%c\n", read_byte[0]);
     if(read_byte[0] == 1){
       s->movie_mode=1;
     }else if(read_byte[0] == 0){
