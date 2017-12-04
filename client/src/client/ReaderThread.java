@@ -20,9 +20,10 @@ public class ReaderThread extends Thread {
 				inputStream = monitor.getSocketRead().getInputStream();
 				DataInputStream dataInputStream = new DataInputStream(inputStream);
 
+				int packageSize = dataInputStream.readInt();
+				
 				String timeStamp = parseTimeStamp(dataInputStream.readInt());
 
-				int packageSize = dataInputStream.readInt();
 				byte[] frames = new byte[packageSize];
 				for (int i = 0; i < packageSize; i++)
 					frames[i] = dataInputStream.readByte();

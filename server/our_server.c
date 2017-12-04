@@ -9,6 +9,7 @@
 #include <netinet/in.h>
 #include "camera.h"
 #include <pthread.h>
+#include <sys/timeb.h>  /* ftime, timeb (for timestamp in millisecond) */
 
 struct global_state {
   camera* cam;
@@ -16,6 +17,7 @@ struct global_state {
   int movie_mode;
   int read_port;
   int write_port;
+  int threads_running;
 };
 
 void* read_task(void *state)
@@ -35,11 +37,14 @@ void* read_task(void *state)
   }
   int comm_fd_read = accept(listen_fd, (struct sockaddr*) NULL, NULL);
   while (1) {
-    usleep(100000);
+    usleep(10000);
     char read_byte[1];
-    if(read(comm_fd_read, read_byte, 1) < 0){
+    int readbyte = read(comm_fd_read, read_byte, 1);
+    printf("READBYTE %d\n", readbyte);
+    if(readbyte < 0){
       comm_fd_read = accept(listen_fd, (struct sockaddr*) NULL, NULL);
     }
+    printf("%d\n",  comm_fd_read);
     if(read_byte[0]){
       s->movie_mode=1;
       printf("ENTERING MOVIE MODE\n");
@@ -55,6 +60,7 @@ void* write_task(void *state)
 {
   camera* cam = camera_open();
   struct global_state* s = state;
+  s->threads_running = 1;
   if (!cam) {
     printf("Failed to create camera\n");
   }
@@ -80,23 +86,37 @@ void* write_task(void *state)
     frame* camera_frame = camera_get_frame(cam);
     byte* camera_byte = get_frame_bytes(camera_frame);
     size_t frame_size = get_frame_size(camera_frame);
-    time_t time_stamp = time(NULL);
-    byte header[8];
+    struct timeb timer_msec;
+    long long int time_stamp; /* timestamp in millisecond. */
+    if (!ftime(&timer_msec)) {
+      time_stamp = ((long long int) timer_msec.time) * 1000ll +
+                          (long long int) timer_msec.millitm;
+    }else{
+      time_stamp = -1;
+    }
+    byte header[12];
     header[0] = (frame_size >> 24) & 0xFF;
     header[1] = (frame_size >> 16) & 0xFF;
     header[2] = (frame_size >> 8) & 0xFF;
     header[3] = frame_size & 0xFF;
-    header[4] = (time_stamp >> 24) & 0xFF;
-    header[5] = (time_stamp >> 16) & 0xFF;
-    header[6] = (time_stamp >> 8) & 0xFF;
-    header[7] = time_stamp & 0xFF;
-    if(write(comm_fd_write, &header, 8) < 0){
+    header[4] = (time_stamp >> 56) & 0xFF;
+    header[5] = (time_stamp >> 48) & 0xFF;
+    header[6] = (time_stamp >> 40) & 0xFF;
+    header[7] = (time_stamp >> 32) & 0xFF;
+    header[8] = (time_stamp >> 24) & 0xFF;
+    header[9] = (time_stamp >> 16) & 0xFF;
+    header[10] = (time_stamp >> 8) & 0xFF;
+    header[11] = time_stamp & 0xFF;
+    printf("%lli\n", time_stamp);
+    int headerbyte = write(comm_fd_write, &header, 12);
+    printf("HEADERBYTE %d\n", headerbyte);
+    if(headerbyte < 0){
       printf("HEJ");
       comm_fd_write = accept(listen_fd, (struct sockaddr*) NULL, NULL);
-    }else if(write(comm_fd_write, camera_byte, frame_size) < 0){
-      printf("HEJ2");
-      comm_fd_write = accept(listen_fd, (struct sockaddr*) NULL, NULL);
+    }else{
+      int camerabyte = write(comm_fd_write, camera_byte, frame_size);
     }
+    //printf("camera_byte %d\n", camerabyte);
     frame_free(camera_frame);
   }
   return (void*) (intptr_t) 0;
@@ -119,8 +139,9 @@ int main(int argc, char *argv[])
   pthread_create(&thread_ids[0], NULL, read_task, &state);
   pthread_create(&thread_ids[1], NULL, write_task, &state);
 
-  pthread_join(thread_ids[0], NULL);
-  pthread_join(thread_ids[1], NULL);
-
+  while(1){
+    pthread_join(thread_ids[0], NULL);
+    pthread_join(thread_ids[1], NULL);
+  }
   return 0;
 }
