@@ -59,8 +59,8 @@ public class SharedData {
 		while (!serverActive) wait();
 	}
 
-	public synchronized void waitUntilNotActive() throws InterruptedException {
-		while (serverActive) wait();
+	public synchronized void waitUntilDisconnect() throws InterruptedException {
+		while (isConnected) wait();
 	}
 
 	public synchronized void disconnect() {
@@ -69,7 +69,6 @@ public class SharedData {
 	}
 
 	public synchronized void connect(String host, String serverReadPort, String serverWritePort) {
-		System.out.println("SERVER READ PORT: " + serverReadPort + "\nSERVER WRITE PORT: " + serverWritePort);
 		isConnected = true;
 		this.host = host;
 		// TODO: Kolla så att dom är rimliga
