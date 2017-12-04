@@ -22,7 +22,8 @@ public class MainWindow {
 	JButton movieB;
 	JButton autoB;
 	JButton syncB;
-	JButton connectB;
+	JButton connectB1;
+	JButton connectB2;
 	JTextArea console;
 	
 	public MainWindow(ClientMonitor cm1, ClientMonitor cm2) {
@@ -43,8 +44,8 @@ public class MainWindow {
 		JTextField port3 = new JTextField("Read port");
 		JTextField port4 = new JTextField("Write port");
 		
-		JButton acceptServer1 = new JButton("Go");
-		JButton acceptServer2 = new JButton("Go");
+		connectB1 = new JButton("Connect");
+		connectB2 = new JButton("Connect");
 		JPanel leftPanel = new JPanel(new GridLayout(1,3));
 		JPanel rightPanel = new JPanel(new GridLayout(1,3));
 		JPanel southPanel = new JPanel(new BorderLayout());
@@ -57,11 +58,11 @@ public class MainWindow {
 		leftPanel.add(tf1);
 		leftPanel.add(port1);
 		leftPanel.add(port2);
-		leftPanel.add(acceptServer1);
+		leftPanel.add(connectB1);
 		rightPanel.add(tf2);
 		rightPanel.add(port3);
 		rightPanel.add(port4);
-		rightPanel.add(acceptServer2);
+		rightPanel.add(connectB2);
 		
 		console.setEditable(false);
 		console.setMaximumSize(new Dimension(150, 150));
@@ -85,7 +86,6 @@ public class MainWindow {
 		movieB = new JButton("Movie");
 		autoB = new JButton("Auto");
 		syncB = new JButton("Sync");
-		connectB = new JButton("Connect");
 
 		//Add components: images to labels
 		ImageIcon icon = new ImageIcon();
@@ -98,7 +98,6 @@ public class MainWindow {
 		buttonPanel.add(movieB);
 		buttonPanel.add(autoB);
 		buttonPanel.add(syncB);
-		buttonPanel.add(connectB);
 		//Add eventlisteners to buttons
 		listeners();
 		
@@ -152,41 +151,41 @@ public class MainWindow {
 			motionText.setText("Movie mode");
 		}
 	}
-	
-	public void printToConsole(String text){
-		console.setText(console.getText() + text + "\n");
-	}
-	
-	public void setActiveCapture(boolean active){
-		if(active){
-			connectionText.setText("Connected");
-		} else {
-			connectionText.setText("Capture server not connected");
-		}
-	}
+//	
+//	public void printToConsole(String text){
+//		console.setText(console.getText() + text + "\n");
+//	}
+//	
+//	public void setActiveCapture(boolean active){
+//		if(active){
+//			connectionText.setText("Connected");
+//		} else {
+//			connectionText.setText("Capture server not connected");
+//		}
+//	}
 
 	private void listeners() {
 		idleB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cm1.buttonIdleMovie(true);
-				cm2.buttonIdleMovie(true);
+				cm1.forceSetMode(true);
+				cm2.forceSetMode(true);
 			}
 		});
 		
 		movieB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cm1.buttonIdleMovie(false);
-				cm2.buttonIdleMovie(false);
+				cm1.forceSetMode(false);
+				cm2.forceSetMode(false);
 			}
 		});
 
 		autoB.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				cm1.buttonAuto();
-				cm2.buttonAuto();
+				cm1.closeForceMode();
+				cm2.closeForceMode();
 			}
 		});
 
@@ -199,20 +198,33 @@ public class MainWindow {
 		});
 		
 
-		connectB.addActionListener(new ActionListener() {
+		connectB1.addActionListener(new ActionListener() {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				System.out.println("Hej Connect");
-				String text = connectB.getText();
+				String text = connectB1.getText();
 				if (text == "Connect") {
 					cm1.buttonConnection(true);
-					cm2.buttonConnection(true);
-					connectB.setText("Disconnect");
+					connectB1.setText("Disconnect");
 				} else {
 					cm1.buttonConnection(false);
+					connectB1.setText("Connect");
+				}
+				
+			}
+		});
+		
+		connectB2.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				String text = connectB2.getText();
+				if (text == "Connect") {
+					cm2.buttonConnection(true);
+					connectB2.setText("Disconnect");
+				} else {
 					cm2.buttonConnection(false);
-					connectB.setText("Connect");
+					connectB2.setText("Connect");
 				}
 				
 			}
