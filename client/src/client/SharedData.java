@@ -1,6 +1,7 @@
 package client;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 import java.net.UnknownHostException;
@@ -16,8 +17,7 @@ public class SharedData {
 	private boolean isConnected;
 	private Socket socketRead;
 	private Socket socketWrite;
-	private Socket socketMotion;
-	private int camera;
+	//private Socket socketMotion;
 	private String host = "";
 	private int serverReadPort;
 	private int serverWritePort;
@@ -26,25 +26,25 @@ public class SharedData {
 	private int prevMode = IDLE_MODE;
 	private int mode = IDLE_MODE;
 
-	public SharedData(int camera) {
-		this.camera = camera;
+	public SharedData() {
 		this.unPackedImages = new LinkedList<>();
 		this.forceMode = false;
 		this.isConnected = false;
 	}
 
-	public int getCameraId() {
-		return camera;
-	}
-
-	public synchronized void addToQueue(String timeStamp, byte[] frames) {
-		DataFrame data = new DataFrame(timeStamp, frames);
-		unPackedImages.add(data);
+	public synchronized void addToQueue(DataFrame dataFrame) {
+		unPackedImages.add(dataFrame);
 		notifyAll();
 	}
 
 	public synchronized void waitUntilServerIsActive() throws InterruptedException {
 		while (!serverActive) wait();
+	}
+	
+	public synchronized DataFrame popUnpackedImage() throws InterruptedException {
+		while (unPackedImages.isEmpty())
+			wait();
+		return unPackedImages.poll();
 	}
 
 	public synchronized void waitUntilDisconnect() throws InterruptedException {
@@ -81,12 +81,6 @@ public class SharedData {
 //	public synchronized Socket getSocketMotion() {
 //		return socketMotion;
 //	}
-
-	public synchronized DataFrame popUnpackedImage() throws InterruptedException {
-		while (unPackedImages.isEmpty())
-			wait();
-		return unPackedImages.poll();
-	}
 
 	public synchronized void trySetMode(int mode) {
 		if (!forceMode) {
@@ -133,6 +127,10 @@ public class SharedData {
 	}
 
 	public synchronized void closeSockets() throws IOException {
+		OutputStream os = socketWrite.getOutputStream();
+		byte[] disconnect = new byte[1];
+		disconnect[0] = (byte) 9;
+		os.write(disconnect);
 		socketRead.close();
 		socketWrite.close();
 		// socketMotion.close();
